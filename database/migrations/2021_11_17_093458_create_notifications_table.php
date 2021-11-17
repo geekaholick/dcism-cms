@@ -17,6 +17,7 @@ class CreateNotificationsTable extends Migration
             $table->id();
             $table->integer('announcement_id');
             $table->integer('user_id');
+            $table->boolean('have_opened')->default(false);
             $table->timestamps();
         });
     }

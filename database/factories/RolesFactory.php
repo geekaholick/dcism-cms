@@ -22,7 +22,7 @@ class RolesFactory extends Factory
     public function definition()
     {
         return [
-            'type' => $this->faker->randomElement(['student', 'head', 'faculty'])
+            'type' => $this->faker->unique()->randomElement(['student', 'head', 'faculty'])
         ];
     }
 }

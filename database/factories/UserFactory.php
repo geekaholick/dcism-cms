@@ -24,10 +24,11 @@ class UserFactory extends Factory
     {
         return [
             'role_id' => $this->faker->numberBetween(1,3),
-            'email' => $this->faker->unique()->safeEmail,
+            'user_email' => $this->faker->unique()->safeEmail,
             'user_password' => 'password',
             'first_name' => $this->faker->name,
             'last_name' => $this->faker->name,
+            'user_image' => 'this is a path to a user\'s image',
             'email_verified_at' => now(),
             'verified' => 1,
             'remember_token' => Str::random(10),

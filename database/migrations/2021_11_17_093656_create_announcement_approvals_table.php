@@ -16,7 +16,7 @@ class CreateAnnouncementApprovalsTable extends Migration
         Schema::create('announcement_approvals', function (Blueprint $table) {
             $table->id();
             $table->integer('announcement_id');
-            $table->boolean('is_approved')->default('false');
+            $table->boolean('is_approved')->default(false);
             $table->timestamps();
         });
     }

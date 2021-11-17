@@ -2,17 +2,16 @@
 
 namespace Database\Factories;
 
-use App\Models\MemoRepo;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class MemoReposFactory extends Factory
+class PrivilegeLevelInfoFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = MemoRepo::class;
+    protected $model = PrivilegeLevelInfo::class;
 
     /**
      * Define the model's default state.
@@ -23,8 +22,6 @@ class MemoReposFactory extends Factory
     {
         return [
             //
-            'announcement_id' => $this->faker->numberBetween(1,150),
-            'memo_path' => 'this is a path to where memo are located'
         ];
     }
 }

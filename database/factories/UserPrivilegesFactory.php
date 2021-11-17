@@ -2,17 +2,17 @@
 
 namespace Database\Factories;
 
-use App\Models\PrivilegeLevelInfo;
+use App\Models\UserPrivileges;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class PrivilegeLevelInfosFactory extends Factory
+class UserPrivilegesFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = PrivilegeLevelInfo::class;
+    protected $model = UserPrivileges::class;
 
     /**
      * Define the model's default state.
@@ -23,6 +23,8 @@ class PrivilegeLevelInfosFactory extends Factory
     {
         return [
             //
+            'user_id' => $this->faker->numberBetween(1,5),
+            'privilege_id' => $this->faker->numberBetween(1,3)
         ];
     }
 }
