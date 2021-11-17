@@ -10,7 +10,7 @@ class MemoRepo extends Model
     use HasFactory;
     protected $fillable = [
         'announcement_id',
-        'memo_path',
+        'memo_path'
     ];
 
 }
