@@ -9,4 +9,14 @@ export default [
     route: 'second-page',
     icon: 'FileIcon',
   },
+  {
+    title: 'Announcements',
+    icon: 'PackageIcon',
+    children: [
+      {
+        title: 'All Announcements',
+        route: 'view-all-announcements',
+      },
+    ],
+  },
 ]
