@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
@@ -49,8 +50,10 @@ const router = new VueRouter({
     {
       path: '/view-all-announcements',
       name: 'view-all-announcements',
-      component: () => import('@/views/announcements/AllAnnouncement.vue'),
+      component: () => import('@/views/announcements/all/AllAnnouncement.vue'),
       meta: {
+        contentRenderer: 'sidebar-left-detached',
+        contentClass: 'ecommerce-application',
         pageTitle: 'All Announcements',
         breadcrumb: [
           {
