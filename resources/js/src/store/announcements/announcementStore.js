@@ -7,7 +7,7 @@ import * as types from './announcementTypes'
 const state = {
   errors: null,
   announcement_list: [],
-  announcement_count: 0
+  announcement_count: 0,
 }
 
 const getters = {
@@ -18,7 +18,9 @@ const actions = {
   [types.ACTION_GET_ALL_ANNOUNCEMENTS](context, data) {
     return new Promise(resolve => {
       console.log('actions announcements')
-      Api().get('/get-all-announcements')
+      console.log(data)
+      Api().get(data.items ? `/get-all-announcements?page=${data.page}&items=${data.items}`
+        : `/get-all-announcements?page=${data.page}`)
         .then(resp => {
           context.commit(types.MUTATION_SET_ALL_ANNOUNCEMENTS, resp.data)
           resolve(resp.data)
@@ -31,7 +33,7 @@ const actions = {
   },
   [types.ACTION_GET_ANNOUNCEMENTS_COUNT](context, data) {
     return new Promise(resolve => {
-        Api().get('/get-all-announcements-count')
+      Api().get('/get-all-announcements-count')
         .then(resp => {
           context.commit(types.MUTATION_SET_ANNOUNCEMENT_COUNT, resp.data)
           resolve(resp.data)
@@ -41,7 +43,7 @@ const actions = {
           resolve(err.response.data.errors)
         })
     })
-  }
+  },
 }
 
 const mutations = {

@@ -15,7 +15,7 @@
                 @click="mqShallShowLeftSidebar = true"
               />
               <div class="search-results">
-                {{ totalProducts }} results found
+                {{ totalAnnouncements }} results found
               </div>
             </div>
             <div class="view-options d-flex">
@@ -85,135 +85,145 @@
     </div>
 
     <!-- Announcements Section -->
-    <section :class="itemView">
-      <b-card
-        v-for="announcement in announcement_list"
-        :key="announcement.announcement_id"
-        class="ecommerce-card position-relative"
-        stye="display: flex !important; flex-direction: flex-column !important;"
-        no-body
+    <div
+      v-if="isLoading"
+    >
+      <section :class="itemView">
+        <announcement-skeleton
+          v-for="i in 12"
+          :key="i"
+        />
+      </section>
+    </div>
+    <div v-else>
+      <div
+        v-if="totalAnnouncements == 0"
+        class="d-flex justify-content-center py-4"
       >
+        no announcements
+      </div>
 
-        <div
-          class="item-wrapper pt-2 pl-1 pb-0"
-          style="justify-content: space-between; align-items: center;"
+      <section
+        v-else
+        :class="itemView"
+      >
+        <b-card
+          v-for="announcement in rendered_announcements"
+          :key="announcement.announcement_id"
+          class="ecommerce-card position-relative"
+          stye="display: flex !important; flex-direction: flex-column !important;"
+          no-body
         >
+
           <div
-            class="d-flex"
-            style="gap: 0.75rem;"
+            class="item-wrapper pt-2 pl-1 pb-0"
+            style="justify-content: space-between; align-items: center;"
           >
-            <b-avatar
-              size="40"
-              :variant="profile_color[announcement.user_id % profile_color.length]"
-              badge
-              :src="null"
-              :text="`${announcement.first_name[0].toUpperCase()}${announcement.last_name[0].toUpperCase()}`"
-              class="badge-minimal"
-            />
-            <div>
-              <p
-                class="pb-0 mb-0 font-weight-bolder"
+            <div
+              class="d-flex"
+              style="gap: 0.75rem;"
+            >
+              <b-avatar
+                size="40"
+                :variant="profile_color[announcement.user_id % profile_color.length]"
+                badge
+                :src="null"
+                :text="`${announcement.first_name[0].toUpperCase()}${announcement.last_name[0].toUpperCase()}`"
+                class="badge-minimal"
+              />
+              <div>
+                <p
+                  class="pb-0 mb-0 font-weight-bolder"
+                >
+                  {{ announcement.first_name }} {{ announcement.last_name }}
+                </p>
+                <span
+                  class="item-description text-muted font-weight-bolder"
+                  style="word-wrap: break-word;"
+                >{{ formatDate(announcement.created_at) }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Dropdown Bookmark -->
+            <div class="dropdown float-right">
+              <b-dropdown
+                variant="link"
+                no-caret
+                toggle-class="p-0 mr-1"
+                right
               >
-                {{ announcement.first_name }} {{ announcement.last_name }}
-              </p>
-              <span
-                class="item-description text-muted font-weight-bolder"
-                style="word-wrap: break-word;"
-              >{{ formatDate(announcement.created_at) }}
-              </span>
+                <template #button-content>
+                  <feather-icon
+                    icon="MoreVerticalIcon"
+                    size="16"
+                    class="align-middle text-body"
+                  />
+                </template>
+                <b-dropdown-item>
+                  <feather-icon
+                    size="16"
+                    icon="BookmarkIcon"
+                    class="mr-50"
+                  /> Bookmark this announcement
+                </b-dropdown-item>
+              </b-dropdown>
             </div>
           </div>
 
-          <!-- Dropdown Bookmark -->
-          <div class="dropdown float-right">
-            <b-dropdown
-              variant="link"
-              no-caret
-              toggle-class="p-0 mr-1"
-              right
-            >
-              <template #button-content>
-                <feather-icon
-                  icon="MoreVerticalIcon"
-                  size="16"
-                  class="align-middle text-body"
-                />
-              </template>
-              <b-dropdown-item>
-                 <feather-icon
-                  size="16"
-                  icon="BookmarkIcon"
-                  class="mr-50"
-                /> Bookmark this announcement
-              </b-dropdown-item>
-            </b-dropdown>
-          </div>
-        </div>
-
-        <!-- Announcement Details -->
-        <b-card-body class="cursor-pointer">
-          <h6 class="item-name mb-2">
-            <b-link
-              class="text-body"
-              :to="{ name: 'view-all-announcements'}"
-            >
-              {{ announcement.title }}
-            </b-link>
-          </h6>
-          <b-card-text class="item-description">
-            {{ addReadMoreToBody(announcement.body) }}
-            <router-link to="/view-all-announcements">
-              (Read more)
-            </router-link>
-          </b-card-text>
-        </b-card-body>
-
-        <!-- Product Actions -->
-        <div class="item-options text-center border-top mx-2">
-          <div class="item-wrapper justify-content-start">
-            <div class="item-cost">
-              <span
-                class="item-price cursor-pointer"
-                style="font-size: 0.75rem;"
+          <!-- Announcement Details -->
+          <b-card-body class="cursor-pointer">
+            <h6 class="item-name mb-2">
+              <b-link
+                class="text-body"
+                :to="{ name: 'view-all-announcements'}"
               >
-                <feather-icon
-                  size="16"
-                  icon="MessageSquareIcon"
-                  class="mr-50"
-                />
-                {{ announcement.comment_no >= 1000 ? `${formatCommentCount(announcement.comment_no)}k comments` : announcement.comment_no > 1 ? `${announcement.comment_no} comments` : `${announcement.comment_no} comment` }}
-              </span>
+                {{ announcement.title }}
+              </b-link>
+            </h6>
+            <b-card-text class="item-description">
+              {{ addReadMoreToBody(announcement.body) }}
+              <router-link to="/view-all-announcements">
+                (Read more)
+              </router-link>
+            </b-card-text>
+          </b-card-body>
+
+          <!-- Product Actions -->
+          <div class="item-options text-center border-top mx-2">
+            <div class="item-wrapper justify-content-start">
+              <div class="item-cost">
+                <span
+                  class="item-price cursor-pointer"
+                  style="font-size: 0.75rem;"
+                >
+                  <feather-icon
+                    size="16"
+                    icon="MessageSquareIcon"
+                    class="mr-50"
+                  />
+                  {{ announcement.comment_no >= 1000 ? `${formatCommentCount(announcement.comment_no)}k comments` : announcement.comment_no > 1 ? `${announcement.comment_no} comments` : `${announcement.comment_no} comment` }}
+                </span>
+              </div>
             </div>
           </div>
-          <!-- <b-button
-            variant="light"
-            tag="a"
-            class="btn-wishlist"
-          >
-            <feather-icon
-              icon="HeartIcon"
-              class="mr-50"
-              :class="{'text-danger': true}"
-            />
-            <span>{{ true ? 'Unbookmark This' : 'Bookmark This' }}</span>
-          </b-button> -->
-        </div>
-      </b-card>
-    </section>
-
+        </b-card>
+      </section>
+    </div>
     <!-- Pagination -->
     <section>
       <b-row>
         <b-col cols="12">
           <b-pagination
-            v-model="filters.page"
+            v-model="page"
             :total-rows="totalAnnouncements"
-            :per-page="filters.perPage"
+            :per-page="perPage"
             first-number
             align="center"
             last-number
             prev-class="prev-item"
             next-class="next-item"
+            @click="makePagination"
           >
             <template #prev-text>
               <feather-icon
@@ -330,6 +340,7 @@ import { useResponsiveAppLeftSidebarVisibility } from '@core/comp-functions/ui/a
 // eslint-disable-next-line no-unused-vars
 import { mapGetters, mapActions } from 'vuex'
 import AnnouncementFilter from './AnnouncementFilter.vue'
+import AnnouncementSkeleton from './AnnouncementSkeleton.vue'
 import * as announcementTypes from '../../../store/announcements/announcementTypes'
 
 export default {
@@ -354,6 +365,7 @@ export default {
     BCardText,
     BPagination,
     BAvatar,
+    AnnouncementSkeleton,
     AnnouncementFilter,
   },
   data() {
@@ -366,9 +378,6 @@ export default {
         categories: [],
         brands: [],
         ratings: null,
-
-        page: 1,
-        perPage: 5,
       },
       filterOptions: {
         priceRangeDefined: [
@@ -420,76 +429,13 @@ export default {
         { icon: 'GridIcon', value: 'list-view test' },
         { icon: 'ListIcon', value: 'list-view' },
       ],
-      totalProducts: 5,
+      isLoading: true,
       totalAnnouncements: 0,
+      page: 1,
+      perPage: 12,
       announcement_list: [],
-      products: [
-        {
-          id: 1,
-          name: 'VicTsing Wireless Mouse,',
-          slug: 'vic-tsing-wireless-mouse-1',
-          description:
-            'After thousands of samples of palm data, we designed this ergonomic mouse. The laptop mouse has a streamlined arc and thumb rest to help reduce the stress caused by prolonged use of the laptop mouse.',
-          brand: 'VicTsing',
-          price: 10.99,
-          // eslint-disable-next-line global-require, import/no-unresolved
-          image: require('@/assets/images/pages/eCommerce/27.png'),
-          hasFreeShipping: true,
-          rating: 3,
-        },
-        {
-          id: 2,
-          name: 'Bose Frames Tenor - Rectangular Polarized, Bluetooth Audio Sunglasses',
-          slug: 'bose-frames-tenor-rectangular-polarized-bluetooth-audio-sunglasses-2',
-          description:
-            'Redesigned for luxury — Thoughtfully refined and strikingly elegant, the latest Bose sunglasses blend enhanced features and designs for an elevated way to listen',
-          brand: 'Bose',
-          price: 249.0,
-          // eslint-disable-next-line global-require, import/no-unresolved
-          image: require('@/assets/images/pages/eCommerce/26.png'),
-          hasFreeShipping: false,
-          rating: 4,
-        },
-        {
-          id: 3,
-          name: 'Willful Smart Watch for Men Women 2020,',
-          slug: 'willful-smart-watch-for-men-women-2020-3',
-          description:
-            'Are you looking for a smart watch, which can not only easily keep tracking of your steps, calories, heart rate and sleep quality, but also keep you informed of incoming calls.',
-          brand: 'Willful',
-          price: 29.99,
-          // eslint-disable-next-line global-require, import/no-unresolved
-          image: require('@/assets/images/pages/eCommerce/25.png'),
-          hasFreeShipping: true,
-          rating: 5,
-        },
-        {
-          id: 4,
-          name: 'Ronyes Unisex College Bag Bookbags for Women',
-          slug: 'ronyes-unisex-college-bag-bookbags-for-women-4',
-          description:
-            'Made of high quality water-resistant material; padded and adjustable shoulder straps; external USB with built-in charging cable offers a convenient charging',
-          brand: 'Ronyes',
-          price: 23.99,
-          // eslint-disable-next-line global-require, import/no-unresolved
-          image: require('@/assets/images/pages/eCommerce/24.png'),
-          hasFreeShipping: true,
-          rating: 2,
-        },
-        {
-          id: 5,
-          name: 'Toshiba Canvio Advance 2TB Portable External Hard Drive',
-          slug: 'toshiba-canvio-advance-2-tb-portable-external-hard-drive-5',
-          description:
-            'Up to 3TB of storage capacity to store your growing files and content',
-          brand: 'Toshiba',
-          price: 69.99,
-          // eslint-disable-next-line global-require, import/no-unresolved
-          image: require('@/assets/images/pages/eCommerce/23.png'),
-          hasFreeShipping: true,
-          rating: 2,
-        },
-      ],
+      rendered_announcements: [],
+      passToSearch: [],
     }
   },
   setup() {
@@ -498,23 +444,36 @@ export default {
       mqShallShowLeftSidebar,
     }
   },
+  watch: {
+    page() {
+      this.makePagination()
+    },
+  },
   async created() {
     try {
       const count = await this.getAnnouncementCount()
       this.totalAnnouncements = count
-      console.log(`total announcement count is ${this.totalAnnouncements}`)
 
-      this.getAllAnnouncements()
-        .then(res => {
-          this.announcement_list = res
-          console.log(this.announcement_list)
-        })
-        .catch(err => {
-          console.log(err)
-        })
+      const page = 1
+      const items = 12
+      const announcements = await this.getAllAnnouncements({
+        page, items,
+      })
+
+      this.announcement_list = new Array(count)
+
+      // eslint-disable-next-line no-plusplus
+      for (let offset = (page - 1) * items, i = 0; i < items; offset++, i++) {
+        this.announcement_list[offset] = announcements[i]
+      }
+
+      this.passToSearch = announcements
+      this.rendered_announcements = [...announcements]
     } catch (e) {
       console.log(e.toString())
     }
+
+    this.isLoading = false
   },
   methods: {
     ...mapActions({
@@ -568,7 +527,7 @@ export default {
 
       if (years === 1) return `(${years} year ago)`
 
-      if (years > 1) return `(${years} year ago)`
+      if (years > 1) return `(${years} years ago)`
 
       if (months === 1) return `(${months} month ago)`
 
@@ -608,6 +567,54 @@ export default {
       // eslint-disable-next-line no-plusplus
       temp = parseFloat(`${temp.join('')}.${x[++i]}`)
       return temp
+    },
+    makePagination() {
+      // eslint-disable-next-line prefer-destructuring
+      const page = this.page
+      const items = this.perPage
+      this.updateList({ page, items })
+    },
+    updateList(params) {
+      // this is to check if the elements to be rendered based on the
+      // pagination are already present
+      const offset = (params.page - 1) * params.items
+      // eslint-disable-next-line camelcase, prefer-const
+      let temp_list = []
+      // eslint-disable-next-line no-plusplus
+      for (let i = offset, j = 0; j < params.items; i++, j++) {
+        if (!this.announcement_list[offset]) {
+          this.isLoading = true
+          break
+        } else {
+          temp_list.push(this.announcement_list[i])
+        }
+      }
+      if (!this.isLoading) {
+        // we need to remove the undefined so as to not accidentally access
+        // invalid index of an array
+        // eslint-disable-next-line camelcase
+        temp_list = temp_list.filter(element => element !== undefined)
+
+        // eslint-disable-next-line camelcase
+        this.rendered_announcements = temp_list
+        return
+      }
+
+      // else, items to be rendered are not yet present, so we
+      // get that from the database
+      this.getAllAnnouncements(params)
+        .then(res => {
+          // eslint-disable-next-line no-plusplus, no-shadow
+          for (let offset = (params.page - 1) * params.items, i = 0; i < res.length; offset++, i++) {
+            this.announcement_list[offset] = res[i]
+          }
+
+          this.rendered_announcements = res
+          this.isLoading = false
+        })
+        .catch(err => {
+          console.log(err.toString())
+        })
     },
   },
 }

@@ -13,6 +13,8 @@ class AnnouncementController extends Controller
     public function getAllAnnouncements(Request $request) {
 
         $announcements = Announcements::join('users', 'users.user_id', '=', 'announcements.user_id')
+                        ->skip(isset($request->items) ? ($request->page - 1) * $request->items : 0)
+                        ->take(isset($request->items) ? $request->items : 12)
                         ->get([
                             'announcement_id', 'users.user_id', 'memo_id', 'title',
                             'body', 'comment_no', 'user_email', 'first_name', 'last_name', 
