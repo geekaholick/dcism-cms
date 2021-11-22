@@ -416,12 +416,12 @@ export default {
     }
   },
   created() {
-    this.getAllAnnouncements();
+    this.getAllAnnouncements()
   },
   methods: {
     ...mapActions({
       getAllAnnouncements: announcementTypes.ACTION_GET_ALL_ANNOUNCEMENTS,
     }),
-  }
+  },
 }
 </script>
