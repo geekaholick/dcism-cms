@@ -1,0 +1,7 @@
+// for forums state
+export const ACTION_GET_ALL_ANNOUNCEMENTS = 'announcements/GET_ALL_ANNOUNCEMENTS'
+
+export const MUTATION_SET_ERROR = 'announcements/MUTATION_SET_ERROR'
+export const MUTATION_SET_ALL_ANNOUNCEMENTS = 'announcements/MUTATION_SET_ALL_ANNOUNCEMENTS'
+
+export const GETTER_ALL_ANNOUNCEMENTS = 'announcements/GETTER_ALL_ANNOUNCEMENTS'

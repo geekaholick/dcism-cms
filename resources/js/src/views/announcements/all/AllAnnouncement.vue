@@ -251,6 +251,8 @@ import {
 import Ripple from 'vue-ripple-directive'
 import { useResponsiveAppLeftSidebarVisibility } from '@core/comp-functions/ui/app'
 import AnnouncementFilter from './AnnouncementFilter.vue'
+import { mapGetters, mapActions } from "vuex";
+import * as announcementTypes from "../../../store/announcements/announcementTypes";
 
 export default {
   directives: {
@@ -413,5 +415,13 @@ export default {
       mqShallShowLeftSidebar,
     }
   },
+  created() {
+    this.getAllAnnouncements();
+  },
+  methods: {
+    ...mapActions({
+      getAllAnnouncements: announcementTypes.ACTION_GET_ALL_ANNOUNCEMENTS,
+    }),
+  }
 }
 </script>
