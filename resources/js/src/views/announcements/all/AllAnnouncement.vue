@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved */
 <template>
   <div
     style="height: inherit"
@@ -71,7 +70,7 @@
           <b-input-group class="input-group-merge">
             <b-form-input
               v-model="filters.q"
-              placeholder="Search Product"
+              placeholder="Search Announcement"
               class="search-product"
             />
             <b-input-group-append is-text>
@@ -88,75 +87,95 @@
     <!-- Announcements Section -->
     <section :class="itemView">
       <b-card
-        v-for="product in products"
-        :key="product.id"
-        class="ecommerce-card"
+        v-for="announcement in announcement_list"
+        :key="announcement.announcement_id"
+        class="ecommerce-card position-relative"
+        stye="display: flex !important; flex-direction: flex-column !important;"
         no-body
       >
-        <div class="item-img text-center">
-          <b-link :to="{ name: 'apps-e-commerce-product-details', params: { slug: product.slug } }">
-            <b-img
-              :alt="`${product.name}-${product.id}`"
-              fluid
-              class="card-img-top"
-              :src="product.image"
+
+        <div
+          class="item-wrapper pt-2 pl-1 pb-0"
+          style="justify-content: space-between; align-items: center;"
+        >
+          <div
+            class="d-flex"
+            style="gap: 0.75rem;"
+          >
+            <b-avatar
+              size="40"
+              :variant="profile_color[announcement.user_id % profile_color.length]"
+              badge
+              :src="null"
+              :text="`${announcement.first_name[0].toUpperCase()}${announcement.last_name[0].toUpperCase()}`"
+              class="badge-minimal"
             />
-          </b-link>
+            <div>
+              <p
+                class="pb-0 mb-0 font-weight-bolder"
+              >
+                {{ announcement.first_name }} {{ announcement.last_name }}
+              </p>
+              <span
+                class="item-description text-muted font-weight-bolder"
+                style="word-wrap: break-word;"
+              >{{ formatDate(announcement.created_at) }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Dropdown -->
+          <div class="dropdown float-right">
+            <b-dropdown
+              variant="link"
+              no-caret
+              toggle-class="p-0 mr-1"
+              right
+            >
+              <template #button-content>
+                <feather-icon
+                  icon="MoreVerticalIcon"
+                  size="16"
+                  class="align-middle text-body"
+                />
+              </template>
+              <b-dropdown-item>
+                Bookmark this announcement
+              </b-dropdown-item>
+            </b-dropdown>
+          </div>
         </div>
 
         <!-- Announcement Details -->
         <b-card-body>
-          <div class="item-wrapper">
-            <div class="item-rating">
-              <ul class="unstyled-list list-inline">
-                <li
-                  v-for="star in 5"
-                  :key="star"
-                  class="ratings-list-item"
-                  :class="{'ml-25': star-1}"
-                >
-                  <feather-icon
-                    icon="StarIcon"
-                    size="16"
-                    :class="[{'fill-current': star <= product.rating}, star <= product.rating ? 'text-warning' : 'text-muted']"
-                  />
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h6 class="item-price">
-                ${{ product.price }}
-              </h6>
-            </div>
-          </div>
           <h6 class="item-name">
             <b-link
               class="text-body"
               :to="{ name: 'view-all-announcements'}"
             >
-              {{ product.name }}
+              {{ announcement.title }}
             </b-link>
-            <b-card-text class="item-company">
-              By <b-link class="ml-25">
-                {{ product.brand }}
-              </b-link>
-            </b-card-text>
           </h6>
           <b-card-text class="item-description">
-            {{ product.description }}
+            {{ announcement.body }}
           </b-card-text>
         </b-card-body>
 
         <!-- Product Actions -->
         <div class="item-options text-center">
-          <div class="item-wrapper">
+          <div class="item-wrapper justify-content-start">
             <div class="item-cost">
-              <h4 class="item-price">
-                ${{ product.price }}
-              </h4>
+              <span class="item-price">
+                <feather-icon
+                  size="16"
+                  icon="MessageSquareIcon"
+                  class="mr-50"
+                />
+                1 comments
+              </span>
             </div>
           </div>
-          <b-button
+          <!-- <b-button
             variant="light"
             tag="a"
             class="btn-wishlist"
@@ -164,21 +183,10 @@
             <feather-icon
               icon="HeartIcon"
               class="mr-50"
-              :class="{'text-danger': product.isInWishlist}"
+              :class="{'text-danger': true}"
             />
-            <span>Wishlist</span>
-          </b-button>
-          <b-button
-            variant="primary"
-            tag="a"
-            class="btn-cart"
-          >
-            <feather-icon
-              icon="ShoppingCartIcon"
-              class="mr-50"
-            />
-            <span>{{ product.isInCart ? 'View In Cart' : 'Add to Cart' }}</span>
-          </b-button>
+            <span>{{ true ? 'Unbookmark This' : 'Bookmark This' }}</span>
+          </b-button> -->
         </div>
       </b-card>
     </section>
@@ -189,7 +197,7 @@
         <b-col cols="12">
           <b-pagination
             v-model="filters.page"
-            :total-rows="totalProducts"
+            :total-rows="totalAnnouncements"
             :per-page="filters.perPage"
             first-number
             align="center"
@@ -229,6 +237,65 @@
 @import "~@core/scss/base/pages/app-ecommerce.scss";
 </style>
 
+<style lang="scss" scoped>
+
+.ecommerce-application .ecommerce-card {
+  grid-template-columns: 1fr !important;
+}
+
+.ecommerce-application .item-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+}
+
+.ecommerce-application .list-view {
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.ecommerce-application .list-view.test {
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1.5rem;
+}
+
+@media screen and (min-width: 1500px) {
+  .ecommerce-application .list-view {
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .ecommerce-application .list-view.test {
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
+  }
+}
+
+@media screen and (max-width: 1350px) {
+  .ecommerce-application .list-view {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .ecommerce-application .list-view.test {
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+}
+
+@media screen and (max-width: 700px) {
+  .ecommerce-application .list-view {
+    grid-template-columns: 1fr;
+    gap: 0.2rem;
+  }
+
+  .ecommerce-application .list-view.test {
+    grid-template-columns: 1fr;
+    gap: 0.2rem;
+  }
+}
+</style>
+
 <script>
 import {
   BDropdown,
@@ -247,9 +314,11 @@ import {
   BCardText,
   BButton,
   BPagination,
+  BAvatar,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import { useResponsiveAppLeftSidebarVisibility } from '@core/comp-functions/ui/app'
+// eslint-disable-next-line no-unused-vars
 import { mapGetters, mapActions } from 'vuex'
 import AnnouncementFilter from './AnnouncementFilter.vue'
 import * as announcementTypes from '../../../store/announcements/announcementTypes'
@@ -271,14 +340,17 @@ export default {
     BCard,
     BCardBody,
     BLink,
+    // eslint-disable-next-line vue/no-unused-components
     BImg,
     BCardText,
     BButton,
     BPagination,
+    BAvatar,
     AnnouncementFilter,
   },
   data() {
     return {
+      profile_color: ['primary', 'secondary', 'success', 'warning', 'danger', 'info'],
       filters: {
         q: '',
         priceRangeDefined: 'all',
@@ -286,8 +358,9 @@ export default {
         categories: [],
         brands: [],
         ratings: null,
+
         page: 1,
-        perPage: 9,
+        perPage: 5,
       },
       filterOptions: {
         priceRangeDefined: [
@@ -334,9 +407,9 @@ export default {
         { text: 'Lowest', value: 'price-asc' },
         { text: 'Highest', value: 'price-desc' },
       ],
-      itemView: 'grid-view',
+      itemView: 'list-view',
       itemViewOptions: [
-        { icon: 'GridIcon', value: 'grid-view' },
+        { icon: 'GridIcon', value: 'list-view test' },
         { icon: 'ListIcon', value: 'list-view' },
       ],
       totalProducts: 5,
@@ -440,6 +513,72 @@ export default {
       getAllAnnouncements: announcementTypes.ACTION_GET_ALL_ANNOUNCEMENTS,
       getAnnouncementCount: announcementTypes.ACTION_GET_ANNOUNCEMENTS_COUNT,
     }),
+    formatDate(date) {
+      const months = [
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December',
+      ]
+
+      const d = new Date(date)
+      const extension = this.getDayDifference(d, new Date())
+
+      return `${
+        months[d.getMonth()]
+      } ${d.getDate()}, ${d.getFullYear()} ${extension}`
+    },
+    getDayDifference(prev, now) {
+      // convert to UTC
+      // eslint-disable-next-line camelcase
+      const date2_UTC = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()))
+      // eslint-disable-next-line camelcase
+      const date1_UTC = new Date(Date.UTC(prev.getUTCFullYear(), prev.getUTCMonth(), prev.getUTCDate()))
+
+      //--------------------------------------------------------------
+      let days = date2_UTC.getDate() - date1_UTC.getDate()
+      if (days < 0) {
+        date2_UTC.setMonth(date2_UTC.getMonth() - 1)
+        days += this.DaysInMonth(date2_UTC)
+      }
+      //--------------------------------------------------------------
+      let months = date2_UTC.getMonth() - date1_UTC.getMonth()
+      if (months < 0) {
+        date2_UTC.setFullYear(date2_UTC.getFullYear() - 1)
+        months += 12
+      }
+      //--------------------------------------------------------------
+      const years = date2_UTC.getFullYear() - date1_UTC.getFullYear()
+
+      if (years === 1) return `(${years} year ago)`
+
+      if (years > 1) return `(${years} year ago)`
+
+      if (months === 1) return `(${months} month ago)`
+
+      if (months > 1) return `(${months} months ago)`
+
+      if (days === 1) return `(${days} day ago)`
+
+      if (days > 1) return `(${days} days ago)`
+
+      return '(today)'
+    },
+    // eslint-disable-next-line camelcase
+    DaysInMonth(date2_UTC) {
+      const monthStart = new Date(date2_UTC.getFullYear(), date2_UTC.getMonth(), 1)
+      const monthEnd = new Date(date2_UTC.getFullYear(), date2_UTC.getMonth() + 1, 1)
+      const monthLength = (monthEnd - monthStart) / (1000 * 60 * 60 * 24)
+      return monthLength
+    },
   },
 }
 </script>
