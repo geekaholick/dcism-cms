@@ -90,7 +90,7 @@
     >
       <section :class="itemView">
         <announcement-skeleton
-          v-for="i in 12"
+          v-for="i in perPage"
           :key="i"
         />
       </section>
@@ -100,7 +100,29 @@
         v-if="totalAnnouncements == 0"
         class="d-flex justify-content-center py-4"
       >
-        no announcements
+        <b-col
+          md="8"
+          lg="8"
+        >
+          <b-card
+            title="Uh ohhh! 😢"
+            class="text-center"
+            bg-variant="light-danger"
+            text-variant="primary"
+          >
+            <b-card-text>
+              There are no announcements to be displayed.
+            </b-card-text>
+            <b-button
+              v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+              variant="outline-primary"
+            >
+              <router-link :to="'/'">
+                Go somewhere else
+              </router-link>
+            </b-button>
+          </b-card>
+        </b-col>
       </div>
 
       <section
@@ -334,6 +356,7 @@ import {
   BCardText,
   BPagination,
   BAvatar,
+  BButton,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import { useResponsiveAppLeftSidebarVisibility } from '@core/comp-functions/ui/app'
@@ -363,6 +386,7 @@ export default {
     // eslint-disable-next-line vue/no-unused-components
     BImg,
     BCardText,
+    BButton,
     BPagination,
     BAvatar,
     AnnouncementSkeleton,
