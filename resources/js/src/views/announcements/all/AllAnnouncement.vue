@@ -124,7 +124,7 @@
             </div>
           </div>
 
-          <!-- Dropdown -->
+          <!-- Dropdown Bookmark -->
           <div class="dropdown float-right">
             <b-dropdown
               variant="link"
@@ -140,15 +140,19 @@
                 />
               </template>
               <b-dropdown-item>
-                Bookmark this announcement
+                 <feather-icon
+                  size="16"
+                  icon="BookmarkIcon"
+                  class="mr-50"
+                /> Bookmark this announcement
               </b-dropdown-item>
             </b-dropdown>
           </div>
         </div>
 
         <!-- Announcement Details -->
-        <b-card-body>
-          <h6 class="item-name">
+        <b-card-body class="cursor-pointer">
+          <h6 class="item-name mb-2">
             <b-link
               class="text-body"
               :to="{ name: 'view-all-announcements'}"
@@ -157,21 +161,27 @@
             </b-link>
           </h6>
           <b-card-text class="item-description">
-            {{ announcement.body }}
+            {{ addReadMoreToBody(announcement.body) }}
+            <router-link to="/view-all-announcements">
+              (Read more)
+            </router-link>
           </b-card-text>
         </b-card-body>
 
         <!-- Product Actions -->
-        <div class="item-options text-center">
+        <div class="item-options text-center border-top mx-2">
           <div class="item-wrapper justify-content-start">
             <div class="item-cost">
-              <span class="item-price">
+              <span
+                class="item-price cursor-pointer"
+                style="font-size: 0.75rem;"
+              >
                 <feather-icon
                   size="16"
                   icon="MessageSquareIcon"
                   class="mr-50"
                 />
-                1 comments
+                {{ announcement.comment_no >= 1000 ? `${formatCommentCount(announcement.comment_no)}k comments` : announcement.comment_no > 1 ? `${announcement.comment_no} comments` : `${announcement.comment_no} comment` }}
               </span>
             </div>
           </div>
@@ -312,7 +322,6 @@ import {
   BLink,
   BImg,
   BCardText,
-  BButton,
   BPagination,
   BAvatar,
 } from 'bootstrap-vue'
@@ -343,7 +352,6 @@ export default {
     // eslint-disable-next-line vue/no-unused-components
     BImg,
     BCardText,
-    BButton,
     BPagination,
     BAvatar,
     AnnouncementFilter,
@@ -578,6 +586,28 @@ export default {
       const monthEnd = new Date(date2_UTC.getFullYear(), date2_UTC.getMonth() + 1, 1)
       const monthLength = (monthEnd - monthStart) / (1000 * 60 * 60 * 24)
       return monthLength
+    },
+    addReadMoreToBody(text) {
+      if (text.length >= 150) {
+        // eslint-disable-next-line camelcase
+        const new_text = text.slice(0, 140)
+        // eslint-disable-next-line camelcase
+        return `${new_text}...`
+      }
+      return text
+    },
+    formatCommentCount(number) {
+      let temp = []
+      let x = number / 1000
+      x = x.toString()
+
+      let i
+      // eslint-disable-next-line no-plusplus
+      for (i = 0; i < x.length && x[i] !== '.'; i++) temp.push(x[i])
+
+      // eslint-disable-next-line no-plusplus
+      temp = parseFloat(`${temp.join('')}.${x[++i]}`)
+      return temp
     },
   },
 }

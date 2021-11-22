@@ -23,6 +23,7 @@ class AnnouncementController extends Controller
             $images = AnnouncementImages::where('announcement_id', '=', $announcement->announcement_id)
                                         ->get(['id', 'announcement_id', 'image_path']);
             $announcement->images = $images;
+            
         }
 
         return $announcements;
