@@ -18,6 +18,7 @@ use App\Http\Controllers\AnnouncementController;
 
 // ANNOUNCEMENT ROUTES
 Route::get('/get-all-announcements', [AnnouncementController::class, 'getAllAnnouncements']);
+Route::get('/get-all-announcements-count', [AnnouncementController::class, 'getAnnouncementCount']);
 
 
 

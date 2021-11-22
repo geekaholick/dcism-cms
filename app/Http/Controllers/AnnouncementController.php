@@ -29,4 +29,9 @@ class AnnouncementController extends Controller
         
     }
 
+    public function getAnnouncementCount(Request $request) {
+        
+        return Announcements::get()->count();
+    }
+
 }

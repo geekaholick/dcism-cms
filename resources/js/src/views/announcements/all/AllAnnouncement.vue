@@ -250,9 +250,9 @@ import {
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import { useResponsiveAppLeftSidebarVisibility } from '@core/comp-functions/ui/app'
+import { mapGetters, mapActions } from 'vuex'
 import AnnouncementFilter from './AnnouncementFilter.vue'
-import { mapGetters, mapActions } from "vuex";
-import * as announcementTypes from "../../../store/announcements/announcementTypes";
+import * as announcementTypes from '../../../store/announcements/announcementTypes'
 
 export default {
   directives: {
@@ -340,6 +340,8 @@ export default {
         { icon: 'ListIcon', value: 'list-view' },
       ],
       totalProducts: 5,
+      totalAnnouncements: 0,
+      announcement_list: [],
       products: [
         {
           id: 1,
@@ -415,12 +417,28 @@ export default {
       mqShallShowLeftSidebar,
     }
   },
-  created() {
-    this.getAllAnnouncements()
+  async created() {
+    try {
+      const count = await this.getAnnouncementCount()
+      this.totalAnnouncements = count
+      console.log(`total announcement count is ${this.totalAnnouncements}`)
+
+      this.getAllAnnouncements()
+        .then(res => {
+          this.announcement_list = res
+          console.log(this.announcement_list)
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    } catch (e) {
+      console.log(e.toString())
+    }
   },
   methods: {
     ...mapActions({
       getAllAnnouncements: announcementTypes.ACTION_GET_ALL_ANNOUNCEMENTS,
+      getAnnouncementCount: announcementTypes.ACTION_GET_ANNOUNCEMENTS_COUNT,
     }),
   },
 }
