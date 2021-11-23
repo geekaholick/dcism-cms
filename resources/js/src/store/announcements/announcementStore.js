@@ -17,9 +17,8 @@ const getters = {
 const actions = {
   [types.ACTION_GET_ALL_ANNOUNCEMENTS](context, data) {
     return new Promise(resolve => {
-      Api().get(`/get-all-announcements?page=${data.page}&items=${data.perPage}&q=${data.q}&sort=${data.sortBy}`)
+      Api().get(`/get-all-announcements?page=${data.page}&items=${data.perPage}&q=${data.q}&sort=${data.sortBy}&month=${data.months}&year=${data.years}`)
         .then(resp => {
-          console.log(resp)
           context.commit(types.MUTATION_SET_ALL_ANNOUNCEMENTS, resp.data)
           resolve(resp.data)
         })
@@ -31,7 +30,7 @@ const actions = {
   },
   [types.ACTION_GET_ANNOUNCEMENTS_COUNT](context, data) {
     return new Promise(resolve => {
-      Api().get(`/get-all-announcements-count?q=${data.q}`)
+      Api().get(`/get-all-announcements-count?q=${data.args.q}&sort=${data.args.sortBy}&month=${data.args.months}&year=${data.args.years}`)
         .then(resp => {
           context.commit(types.MUTATION_SET_ANNOUNCEMENT_COUNT, resp.data)
           resolve(resp.data)

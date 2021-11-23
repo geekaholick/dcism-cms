@@ -270,6 +270,7 @@
         :filters="filters"
         :filter-options="filterOptions"
         :mq-shall-show-left-sidebar.sync="mqShallShowLeftSidebar"
+        @reset="reset"
       />
     </portal>
   </div>
@@ -396,42 +397,28 @@ export default {
     return {
       profile_color: ['primary', 'secondary', 'success', 'warning', 'danger', 'info'],
       filterOptions: {
-        priceRangeDefined: [
-          { text: 'All', value: 'all' },
-          { text: '<= $10', value: '<=10' },
-          { text: '$10 - $100', value: '10-100' },
-          { text: '$100 - $500', value: '100-500' },
-          { text: '>= $500', value: '>=500' },
+        months: [
+          'January',
+          'February',
+          'March',
+          'April',
+          'May',
+          'June',
+          'July',
+          'August',
+          'September',
+          'October',
+          'November',
+          'December',
         ],
-        categories: [
-          'Appliances',
-          'Audio',
-          'Cameras & Camcorders',
-          'Car Electronics & GPS',
-          'Cell Phones',
-          'Computers & Tablets',
-          'Health, Fitness & Beauty',
-          'Office & School Supplies',
-          'TV & Home Theater',
-          'Video Games',
-        ],
-        brands: [
-          'Insignia™',
-          'Samsung',
-          'Metra',
-          'HP',
-          'Apple',
-          'GE',
-          'Sony',
-          'Incipio',
-          'KitchenAid',
-          'Whirlpool',
-        ],
-        ratings: [
-          { rating: 4, count: 160 },
-          { rating: 3, count: 176 },
-          { rating: 2, count: 291 },
-          { rating: 1, count: 190 },
+        years: [
+          new Date().getFullYear(),
+          new Date().getFullYear() - 1,
+          new Date().getFullYear() - 2,
+          new Date().getFullYear() - 3,
+          new Date().getFullYear() - 4,
+          new Date().getFullYear() - 5,
+          new Date().getFullYear() - 6,
         ],
       },
       sortBy: { text: 'Latest', value: 'latest' },
@@ -449,7 +436,8 @@ export default {
         page: 1,
         perPage: 12,
         sortBy: 'latest',
-
+        months: new Date().toLocaleString('default', { month: 'long' }),
+        years: new Date().getFullYear(),
       },
       isLoading: true,
       totalAnnouncements: 0,
@@ -473,11 +461,13 @@ export default {
   },
   async created() {
     try {
-      const count = await this.getAnnouncementCount({ q: this.filters.q })
+      const args = this.filters
+
+      const count = await this.getAnnouncementCount({
+        args,
+      })
       this.totalAnnouncements = count
 
-      const args = this.filters
-      console.log(args)
       const announcements = await this.getAllAnnouncements(
         args,
       )
@@ -587,7 +577,10 @@ export default {
       this.isLoading = true
       // eslint-disable-next-line prefer-destructuring
       try {
-        const count = await this.getAnnouncementCount({ q: this.filters.q })
+        const args = this.filters
+        const count = await this.getAnnouncementCount({
+          args,
+        })
         this.totalAnnouncements = count
 
         const announcements = await this.getAllAnnouncements(this.filters)
@@ -596,6 +589,10 @@ export default {
         console.log(err.toString())
       }
       this.isLoading = false
+    },
+    reset() {
+      this.filters.months = new Date().toLocaleString('default', { month: 'long' })
+      this.filters.years = new Date().getFullYear()
     },
   },
 }
