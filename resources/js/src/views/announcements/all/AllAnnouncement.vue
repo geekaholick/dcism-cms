@@ -67,17 +67,15 @@
     <div class="ecommerce-searchbar mt-1">
       <b-row>
         <b-col cols="12">
-          <b-input-group class="input-group-merge">
+          <b-input-group class="input-group-merg">
             <b-form-input
-              v-model="filters.q"
+              v-model="searchValue"
               placeholder="Search Announcement"
-              class="search-product"
             />
-            <b-input-group-append is-text>
-              <feather-icon
-                icon="SearchIcon"
-                class="text-muted"
-              />
+            <b-input-group-append @click="search">
+              <b-button variant="outline-primary">
+                GO
+              </b-button>
             </b-input-group-append>
           </b-input-group>
         </b-col>
@@ -454,7 +452,9 @@ export default {
         { icon: 'ListIcon', value: 'list-view' },
       ],
       isLoading: true,
+      totalFilteredAnnouncements: 0,
       totalAnnouncements: 0,
+      searchValue: '',
       page: 1,
       perPage: 12,
       announcement_list: [],
@@ -471,6 +471,11 @@ export default {
   watch: {
     page() {
       this.makePagination()
+    },
+    searchValue() {
+      if (this.searchValue.length === 0) {
+        this.search()
+      }
     },
   },
   async created() {
@@ -503,6 +508,7 @@ export default {
     ...mapActions({
       getAllAnnouncements: announcementTypes.ACTION_GET_ALL_ANNOUNCEMENTS,
       getAnnouncementCount: announcementTypes.ACTION_GET_ANNOUNCEMENTS_COUNT,
+      getFilteredAnnouncements: announcementTypes.ACTION_GET_FILTERED_ANNOUNCEMENTS,
     }),
     formatDate(date) {
       const months = [
@@ -598,7 +604,7 @@ export default {
       const items = this.perPage
       this.updateList({ page, items })
     },
-    updateList(params) {
+    async updateList(params) {
       // this is to check if the elements to be rendered based on the
       // pagination are already present
       const offset = (params.page - 1) * params.items
@@ -613,7 +619,7 @@ export default {
           temp_list.push(this.announcement_list[i])
         }
       }
-      if (!this.isLoading) {
+      if (!this.isLoading && this.totalAnnouncements !== 0) {
         // we need to remove the undefined so as to not accidentally access
         // invalid index of an array
         // eslint-disable-next-line camelcase
@@ -624,6 +630,9 @@ export default {
         return
       }
 
+      const count = await this.getAnnouncementCount()
+      this.totalAnnouncements = count
+
       // else, items to be rendered are not yet present, so we
       // get that from the database
       this.getAllAnnouncements(params)
@@ -633,12 +642,54 @@ export default {
             this.announcement_list[offset] = res[i]
           }
 
+
           this.rendered_announcements = res
           this.isLoading = false
         })
         .catch(err => {
           console.log(err.toString())
         })
+    },
+    async search() {
+      if (this.searchValue === '') {
+        const count = await this.getAnnouncementCount()
+        this.totalAnnouncements = count
+
+        // else, items to be rendered are not yet present, so we
+        // get that from the database
+        this.getAllAnnouncements({ page: this.page, items: this.perPage, q: this.searchValue })
+          .then(res => {
+            // eslint-disable-next-line no-plusplus, no-shadow
+            for (let offset = (this.page - 1) * this.perPage, i = 0; i < res.length; offset++, i++) {
+              this.announcement_list[offset] = res[i]
+            }
+
+            this.rendered_announcements = res
+            this.isLoading = false
+          })
+          .catch(err => {
+            console.log(err.toString())
+          })
+        return
+      }
+
+      this.isLoading = true
+      const res = await this.getFilteredAnnouncements({ q: this.searchValue })
+      console.log('AWHAWA')
+      console.log(res)
+
+      this.announcement_list = res
+      this.totalAnnouncements = res.length
+
+      this.rendered_announcements = []
+      // eslint-disable-next-line no-plusplus, no-shadow
+      for (let i = 0, j = 0; i < this.perPage && j < res.length; i++, j++) {
+        this.rendered_announcements[i] = res[i]
+      }
+
+      console.log("wah")
+      console.log(this.rendered_announcements)
+      this.isLoading = false
     },
   },
 }
