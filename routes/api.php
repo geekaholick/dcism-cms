@@ -20,6 +20,7 @@ use App\Http\Controllers\AnnouncementController;
 Route::get('/get-all-announcements', [AnnouncementController::class, 'getAllAnnouncements']);
 Route::get('/get-all-announcements-count', [AnnouncementController::class, 'getAnnouncementCount']);
 Route::get('/get-filtered-announcements', [AnnouncementController::class, 'getFilteredAnnouncements']);
+Route::get('/test', [AnnouncementController::class, 'testFunction']);
 
 
 

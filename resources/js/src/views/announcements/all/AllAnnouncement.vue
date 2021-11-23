@@ -29,7 +29,7 @@
                 <b-dropdown-item
                   v-for="sortOption in sortByOptions"
                   :key="sortOption.value"
-                  @click="sortBy = sortOption"
+                  @click="filters.sortBy = sortOption.value, sortBy = sortOption"
                 >
                   {{ sortOption.text }}
                 </b-dropdown-item>
@@ -67,15 +67,17 @@
     <div class="ecommerce-searchbar mt-1">
       <b-row>
         <b-col cols="12">
-          <b-input-group class="input-group-merg">
+          <b-input-group class="input-group-merge">
             <b-form-input
-              v-model="searchValue"
+              v-model="filters.q"
               placeholder="Search Announcement"
+              class="search-product"
             />
-            <b-input-group-append @click="search">
-              <b-button variant="outline-primary">
-                GO
-              </b-button>
+            <b-input-group-append is-text>
+              <feather-icon
+                icon="SearchIcon"
+                class="text-muted"
+              />
             </b-input-group-append>
           </b-input-group>
         </b-col>
@@ -88,7 +90,7 @@
     >
       <section :class="itemView">
         <announcement-skeleton
-          v-for="i in perPage"
+          v-for="i in filters.perPage"
           :key="i"
         />
       </section>
@@ -128,7 +130,7 @@
         :class="itemView"
       >
         <b-card
-          v-for="announcement in rendered_announcements"
+          v-for="announcement in announcement_list"
           :key="announcement.announcement_id"
           class="ecommerce-card position-relative"
           stye="display: flex !important; flex-direction: flex-column !important;"
@@ -235,9 +237,9 @@
       <b-row>
         <b-col cols="12">
           <b-pagination
-            v-model="page"
+            v-model="filters.page"
             :total-rows="totalAnnouncements"
-            :per-page="perPage"
+            :per-page="filters.perPage"
             first-number
             align="center"
             last-number
@@ -393,14 +395,6 @@ export default {
   data() {
     return {
       profile_color: ['primary', 'secondary', 'success', 'warning', 'danger', 'info'],
-      filters: {
-        q: '',
-        priceRangeDefined: 'all',
-        priceRange: [0, 100],
-        categories: [],
-        brands: [],
-        ratings: null,
-      },
       filterOptions: {
         priceRangeDefined: [
           { text: 'All', value: 'all' },
@@ -440,25 +434,26 @@ export default {
           { rating: 1, count: 190 },
         ],
       },
-      sortBy: { text: 'Featured', value: 'featured' },
+      sortBy: { text: 'Latest', value: 'latest' },
       sortByOptions: [
-        { text: 'Featured', value: 'featured' },
-        { text: 'Lowest', value: 'price-asc' },
-        { text: 'Highest', value: 'price-desc' },
+        { text: 'Latest', value: 'latest' },
+        { text: 'Oldest', value: 'oldest' },
       ],
       itemView: 'list-view',
       itemViewOptions: [
         { icon: 'GridIcon', value: 'list-view test' },
         { icon: 'ListIcon', value: 'list-view' },
       ],
+      filters: {
+        q: '',
+        page: 1,
+        perPage: 12,
+        sortBy: 'latest',
+
+      },
       isLoading: true,
-      totalFilteredAnnouncements: 0,
       totalAnnouncements: 0,
-      searchValue: '',
-      page: 1,
-      perPage: 12,
       announcement_list: [],
-      rendered_announcements: [],
       passToSearch: [],
     }
   },
@@ -469,35 +464,25 @@ export default {
     }
   },
   watch: {
-    page() {
-      this.makePagination()
-    },
-    searchValue() {
-      if (this.searchValue.length === 0) {
-        this.search()
-      }
+    filters: {
+      deep: true,
+      handler() {
+        this.makePagination()
+      },
     },
   },
   async created() {
     try {
-      const count = await this.getAnnouncementCount()
+      const count = await this.getAnnouncementCount({ q: this.filters.q })
       this.totalAnnouncements = count
 
-      const page = 1
-      const items = 12
-      const announcements = await this.getAllAnnouncements({
-        page, items,
-      })
+      const args = this.filters
+      console.log(args)
+      const announcements = await this.getAllAnnouncements(
+        args,
+      )
 
-      this.announcement_list = new Array(count)
-
-      // eslint-disable-next-line no-plusplus
-      for (let offset = (page - 1) * items, i = 0; i < items; offset++, i++) {
-        this.announcement_list[offset] = announcements[i]
-      }
-
-      this.passToSearch = announcements
-      this.rendered_announcements = [...announcements]
+      this.announcement_list = announcements
     } catch (e) {
       console.log(e.toString())
     }
@@ -598,97 +583,18 @@ export default {
       temp = parseFloat(`${temp.join('')}.${x[++i]}`)
       return temp
     },
-    makePagination() {
+    async makePagination() {
+      this.isLoading = true
       // eslint-disable-next-line prefer-destructuring
-      const page = this.page
-      const items = this.perPage
-      this.updateList({ page, items })
-    },
-    async updateList(params) {
-      // this is to check if the elements to be rendered based on the
-      // pagination are already present
-      const offset = (params.page - 1) * params.items
-      // eslint-disable-next-line camelcase, prefer-const
-      let temp_list = []
-      // eslint-disable-next-line no-plusplus
-      for (let i = offset, j = 0; j < params.items; i++, j++) {
-        if (!this.announcement_list[offset]) {
-          this.isLoading = true
-          break
-        } else {
-          temp_list.push(this.announcement_list[i])
-        }
-      }
-      if (!this.isLoading && this.totalAnnouncements !== 0) {
-        // we need to remove the undefined so as to not accidentally access
-        // invalid index of an array
-        // eslint-disable-next-line camelcase
-        temp_list = temp_list.filter(element => element !== undefined)
-
-        // eslint-disable-next-line camelcase
-        this.rendered_announcements = temp_list
-        return
-      }
-
-      const count = await this.getAnnouncementCount()
-      this.totalAnnouncements = count
-
-      // else, items to be rendered are not yet present, so we
-      // get that from the database
-      this.getAllAnnouncements(params)
-        .then(res => {
-          // eslint-disable-next-line no-plusplus, no-shadow
-          for (let offset = (params.page - 1) * params.items, i = 0; i < res.length; offset++, i++) {
-            this.announcement_list[offset] = res[i]
-          }
-
-
-          this.rendered_announcements = res
-          this.isLoading = false
-        })
-        .catch(err => {
-          console.log(err.toString())
-        })
-    },
-    async search() {
-      if (this.searchValue === '') {
-        const count = await this.getAnnouncementCount()
+      try {
+        const count = await this.getAnnouncementCount({ q: this.filters.q })
         this.totalAnnouncements = count
 
-        // else, items to be rendered are not yet present, so we
-        // get that from the database
-        this.getAllAnnouncements({ page: this.page, items: this.perPage, q: this.searchValue })
-          .then(res => {
-            // eslint-disable-next-line no-plusplus, no-shadow
-            for (let offset = (this.page - 1) * this.perPage, i = 0; i < res.length; offset++, i++) {
-              this.announcement_list[offset] = res[i]
-            }
-
-            this.rendered_announcements = res
-            this.isLoading = false
-          })
-          .catch(err => {
-            console.log(err.toString())
-          })
-        return
+        const announcements = await this.getAllAnnouncements(this.filters)
+        this.announcement_list = announcements
+      } catch (err) {
+        console.log(err.toString())
       }
-
-      this.isLoading = true
-      const res = await this.getFilteredAnnouncements({ q: this.searchValue })
-      console.log('AWHAWA')
-      console.log(res)
-
-      this.announcement_list = res
-      this.totalAnnouncements = res.length
-
-      this.rendered_announcements = []
-      // eslint-disable-next-line no-plusplus, no-shadow
-      for (let i = 0, j = 0; i < this.perPage && j < res.length; i++, j++) {
-        this.rendered_announcements[i] = res[i]
-      }
-
-      console.log("wah")
-      console.log(this.rendered_announcements)
       this.isLoading = false
     },
   },
