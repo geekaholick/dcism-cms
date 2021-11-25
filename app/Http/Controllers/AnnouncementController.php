@@ -12,6 +12,7 @@ class AnnouncementController extends Controller
 {
     public function getAllAnnouncements(Request $request) {
 
+        
         $months = [
             'January' => 1,
             'February' => 2,
@@ -28,8 +29,12 @@ class AnnouncementController extends Controller
         ];
         
         $announcements = Announcements::join('users', 'users.user_id', '=', 'announcements.user_id')
-                        ->whereMonth('announcements.created_at', $months[$request->month])
-                        ->whereYear('announcements.created_at', $request->year)
+                        ->when(isset($request->month), function ($q) use ($request, $months) {
+                            $q->whereMonth('announcements.created_at', $months[$request->month]);
+                        })
+                        ->when(isset($request->year), function ($q) use ($request) {
+                            $q->whereYear('announcements.created_at', $request->year);
+                        })
                         ->where(function ($query) use ($request) {
                             $query->where('title', 'like' , "%$request->q%")
                             ->orWhere('body', 'like' , "%$request->q%")
@@ -73,8 +78,12 @@ class AnnouncementController extends Controller
         ];
         
         return Announcements::join('users', 'users.user_id', '=', 'announcements.user_id')
-        ->whereMonth('announcements.created_at', $months[$request->month])
-        ->whereYear('announcements.created_at', $request->year)
+        ->when(isset($request->month), function ($q) use ($request, $months) {
+            $q->whereMonth('announcements.created_at', $months[$request->month]);
+        })
+        ->when(isset($request->year), function ($q) use ($request) {
+            $q->whereYear('announcements.created_at', $request->year);
+        })
         ->where(function ($query) use ($request) {
             $query->where('title', 'like' , "%$request->q%")
             ->orWhere('body', 'like' , "%$request->q%")
