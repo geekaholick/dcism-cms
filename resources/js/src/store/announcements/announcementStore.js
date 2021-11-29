@@ -17,7 +17,7 @@ const getters = {
 const actions = {
   [types.ACTION_GET_ALL_ANNOUNCEMENTS](context, data) {
     return new Promise(resolve => {
-      Api().get(`/get-all-announcements?page=${data.page}&items=${data.perPage}&q=${data.q}&sort=${data.sortBy}&month=${data.months}&year=${data.years}`)
+      Api().get(`/get-all-announcements?page=${data.args.page}&items=${data.args.perPage}&q=${data.args.q}&sort=${data.args.sortBy}&month=${data.args.months}&year=${data.args.years}&user_id=${data.user_id}`)
         .then(resp => {
           context.commit(types.MUTATION_SET_ALL_ANNOUNCEMENTS, resp.data)
           resolve(resp.data)
@@ -46,6 +46,30 @@ const actions = {
       Api().get(`/get-filtered-announcements?page=${data.page}&items=${data.items}&q=${data.q}`)
         .then(resp => {
           resolve(resp.data)
+        })
+        .catch(err => {
+          context.commit(types.MUTATION_SET_ERROR, err.response.data.errors)
+          resolve(err.response.data.errors)
+        })
+    })
+  },
+  [types.ACTION_BOOKMARK_ANNOUNCEMENT](context, data) {
+    return new Promise(resolve => {
+      Api().post('/bookmark-announcement', data)
+        .then(res => {
+          resolve(res.data)
+        })
+        .catch(err => {
+          context.commit(types.MUTATION_SET_ERROR, err.response.data.errors)
+          resolve(err.response.data.errors)
+        })
+    })
+  },
+  [types.ACTION_UNBOOKMARK_ANNOUNCEMENT](context, data) {
+    return new Promise(resolve => {
+      Api().post('/unbookmark-announcement', data)
+        .then(res => {
+          resolve(res.data)
         })
         .catch(err => {
           context.commit(types.MUTATION_SET_ERROR, err.response.data.errors)
