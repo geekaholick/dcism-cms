@@ -454,7 +454,7 @@ export default {
       const args = this.filters
 
       const count = await this.getBookmarksCount({
-        args,
+        args, user_id: this.user_id,
       })
       this.totalAnnouncements = count
 
@@ -568,7 +568,7 @@ export default {
       try {
         const args = this.filters
         const count = await this.getBookmarksCount({
-          args,
+          args, user_id: this.user_id,
         })
         this.totalAnnouncements = count
 
