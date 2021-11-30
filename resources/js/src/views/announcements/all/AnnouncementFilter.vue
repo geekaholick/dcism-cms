@@ -16,83 +16,48 @@
         <!-- Filters' Card -->
         <b-card>
 
-          <!-- Multi Range -->
+          <!-- Months -->
           <div class="multi-range-price">
             <h6 class="filter-title mt-0">
-              Multi Range
+              Months
             </h6>
             <b-form-radio-group
-              v-model="filters.priceRangeDefined"
+              v-model="filters.months"
               class="price-range-defined-radio-group"
               stacked
-              :options="filterOptions.priceRangeDefined"
+              :options="filterOptions.months"
             />
           </div>
 
-          <!-- Price Slider -->
-          <div class="price-slider">
-            <h6 class="filter-title">
-              Price Range
-            </h6>
-            <vue-slider
-              v-model="filters.priceRange"
-              :direction="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
-            />
-          </div>
-
-          <!-- Categories -->
+          <!-- Years -->
           <div class="product-categories">
             <h6 class="filter-title">
-              Categories
+              Years
             </h6>
-            <b-form-radio-group
+            <!-- <b-form-radio-group
               v-model="filters.categories"
               class="categories-radio-group"
               stacked
               :options="filterOptions.categories"
-            />
-          </div>
+            /> -->
+            <b-form-group>
+              <v-select
+                v-model="filters.years"
+                :options="filterOptions.years"
+                placeholder="Select Year"
+                label="title"
+              />
+            </b-form-group>
 
-          <!-- Brands -->
-          <div class="brands">
-            <h6 class="filter-title">
-              Brands
-            </h6>
-            <b-form-radio-group
-              v-model="filters.brands"
-              class="brands-radio-group"
-              stacked
-              :options="filterOptions.brands"
-            />
-          </div>
-
-          <!-- Ratings -->
-          <div class="ratings">
-            <h6 class="filter-title">
-              Ratings
-            </h6>
-            <div
-              v-for="rating in filterOptions.ratings"
-              :key="rating.rating"
-              class="ratings-list"
+            <b-button
+              v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+              variant="outline-primary"
+              @click="reset"
             >
-              <b-link>
-                <div class="d-flex">
-                  <feather-icon
-                    v-for="star in 5"
-                    :key="star"
-                    icon="StarIcon"
-                    size="17"
-                    :class="[{'fill-current': star <= rating.rating}, star <= rating.rating ? 'text-warning' : 'text-muted']"
-                  />
-                  <span class="ml-25">&amp; up</span>
-                </div>
-              </b-link>
-              <div class="stars-received">
-                <span>{{ rating.count }}</span>
-              </div>
-            </div>
+                Reset
+            </b-button>
           </div>
+
         </b-card>
       </div>
     </div>
@@ -106,7 +71,7 @@
 </template>
 
 <style lang="scss">
-@import '~@core/scss/vue/libs/vue-slider.scss';
+@import '~@core/scss/vue/libs/vue-select.scss';
 </style>
 
 <style lang="scss" scoped>
@@ -121,20 +86,23 @@
 
 <script>
 import {
-  BRow, BCol, BCard, BFormRadioGroup, BLink,
+  BRow, BCol, BCard, BFormRadioGroup, BFormGroup, BButton,
 } from 'bootstrap-vue'
-import VueSlider from 'vue-slider-component'
+import vSelect from 'vue-select'
+import Ripple from 'vue-ripple-directive'
 
 export default {
+  directives: {
+    Ripple,
+  },
   components: {
     BRow,
     BCol,
     BFormRadioGroup,
-    BLink,
     BCard,
-
-    // 3rd Party
-    VueSlider,
+    BFormGroup,
+    BButton,
+    vSelect,
   },
   props: {
     filters: {
@@ -150,5 +118,10 @@ export default {
       required: true,
     },
   },
+  methods: {
+    reset() {
+      this.$emit('reset', this.filters)
+    },
+  }
 }
 </script>

@@ -29,7 +29,7 @@
                 <b-dropdown-item
                   v-for="sortOption in sortByOptions"
                   :key="sortOption.value"
-                  @click="sortBy = sortOption"
+                  @click="filters.sortBy = sortOption.value, sortBy = sortOption"
                 >
                   {{ sortOption.text }}
                 </b-dropdown-item>
@@ -90,7 +90,7 @@
     >
       <section :class="itemView">
         <announcement-skeleton
-          v-for="i in perPage"
+          v-for="i in filters.perPage"
           :key="i"
         />
       </section>
@@ -130,13 +130,12 @@
         :class="itemView"
       >
         <b-card
-          v-for="announcement in rendered_announcements"
+          v-for="announcement in announcement_list"
           :key="announcement.announcement_id"
           class="ecommerce-card position-relative"
           stye="display: flex !important; flex-direction: flex-column !important;"
           no-body
         >
-
           <div
             class="item-wrapper pt-2 pl-1 pb-0"
             style="justify-content: space-between; align-items: center;"
@@ -182,12 +181,25 @@
                     class="align-middle text-body"
                   />
                 </template>
-                <b-dropdown-item>
+                <b-dropdown-item
+                  v-if="announcement.is_bookmarked != 1"
+                  @click="bookmark(announcement.announcement_id)"
+                >
                   <feather-icon
                     size="16"
                     icon="BookmarkIcon"
                     class="mr-50"
                   /> Bookmark this announcement
+                </b-dropdown-item>
+                <b-dropdown-item
+                  v-else
+                  @click="unBookmark(announcement.announcement_id)"
+                >
+                  <feather-icon
+                    size="16"
+                    icon="BookmarkIcon"
+                    class="mr-50 text-danger"
+                  /> Remove from bookmarks
                 </b-dropdown-item>
               </b-dropdown>
             </div>
@@ -237,9 +249,9 @@
       <b-row>
         <b-col cols="12">
           <b-pagination
-            v-model="page"
+            v-model="filters.page"
             :total-rows="totalAnnouncements"
-            :per-page="perPage"
+            :per-page="filters.perPage"
             first-number
             align="center"
             last-number
@@ -270,6 +282,7 @@
         :filters="filters"
         :filter-options="filterOptions"
         :mq-shall-show-left-sidebar.sync="mqShallShowLeftSidebar"
+        @reset="reset"
       />
     </portal>
   </div>
@@ -339,6 +352,7 @@
 </style>
 
 <script>
+/* eslint-disable camelcase */
 import {
   BDropdown,
   BDropdownItem,
@@ -362,6 +376,8 @@ import Ripple from 'vue-ripple-directive'
 import { useResponsiveAppLeftSidebarVisibility } from '@core/comp-functions/ui/app'
 // eslint-disable-next-line no-unused-vars
 import { mapGetters, mapActions } from 'vuex'
+// eslint-disable-next-line import/no-extraneous-dependencies
+import Swal from 'sweetalert2'
 import AnnouncementFilter from './AnnouncementFilter.vue'
 import AnnouncementSkeleton from './AnnouncementSkeleton.vue'
 import * as announcementTypes from '../../../store/announcements/announcementTypes'
@@ -395,71 +411,54 @@ export default {
   data() {
     return {
       profile_color: ['primary', 'secondary', 'success', 'warning', 'danger', 'info'],
-      filters: {
-        q: '',
-        priceRangeDefined: 'all',
-        priceRange: [0, 100],
-        categories: [],
-        brands: [],
-        ratings: null,
-      },
       filterOptions: {
-        priceRangeDefined: [
-          { text: 'All', value: 'all' },
-          { text: '<= $10', value: '<=10' },
-          { text: '$10 - $100', value: '10-100' },
-          { text: '$100 - $500', value: '100-500' },
-          { text: '>= $500', value: '>=500' },
+        months: [
+          'January',
+          'February',
+          'March',
+          'April',
+          'May',
+          'June',
+          'July',
+          'August',
+          'September',
+          'October',
+          'November',
+          'December',
         ],
-        categories: [
-          'Appliances',
-          'Audio',
-          'Cameras & Camcorders',
-          'Car Electronics & GPS',
-          'Cell Phones',
-          'Computers & Tablets',
-          'Health, Fitness & Beauty',
-          'Office & School Supplies',
-          'TV & Home Theater',
-          'Video Games',
-        ],
-        brands: [
-          'Insignia™',
-          'Samsung',
-          'Metra',
-          'HP',
-          'Apple',
-          'GE',
-          'Sony',
-          'Incipio',
-          'KitchenAid',
-          'Whirlpool',
-        ],
-        ratings: [
-          { rating: 4, count: 160 },
-          { rating: 3, count: 176 },
-          { rating: 2, count: 291 },
-          { rating: 1, count: 190 },
+        years: [
+          new Date().getFullYear(),
+          new Date().getFullYear() - 1,
+          new Date().getFullYear() - 2,
+          new Date().getFullYear() - 3,
+          new Date().getFullYear() - 4,
+          new Date().getFullYear() - 5,
+          new Date().getFullYear() - 6,
         ],
       },
-      sortBy: { text: 'Featured', value: 'featured' },
+      sortBy: { text: 'Latest', value: 'latest' },
       sortByOptions: [
-        { text: 'Featured', value: 'featured' },
-        { text: 'Lowest', value: 'price-asc' },
-        { text: 'Highest', value: 'price-desc' },
+        { text: 'Latest', value: 'latest' },
+        { text: 'Oldest', value: 'oldest' },
       ],
       itemView: 'list-view',
       itemViewOptions: [
         { icon: 'GridIcon', value: 'list-view test' },
         { icon: 'ListIcon', value: 'list-view' },
       ],
+      filters: {
+        q: '',
+        page: 1,
+        perPage: 12,
+        sortBy: 'latest',
+        months: new Date().toLocaleString('default', { month: 'long' }),
+        years: new Date().getFullYear(),
+      },
       isLoading: true,
       totalAnnouncements: 0,
-      page: 1,
-      perPage: 12,
       announcement_list: [],
-      rendered_announcements: [],
       passToSearch: [],
+      user_id: 4,
     }
   },
   setup() {
@@ -469,40 +468,39 @@ export default {
     }
   },
   watch: {
-    page() {
-      this.makePagination()
+    filters: {
+      deep: true,
+      handler() {
+        this.makePagination()
+      },
     },
   },
   async created() {
     try {
-      const count = await this.getAnnouncementCount()
+      const args = this.filters
+
+      const count = await this.getAnnouncementCount({
+        args,
+      })
       this.totalAnnouncements = count
 
-      const page = 1
-      const items = 12
       const announcements = await this.getAllAnnouncements({
-        page, items,
+        args, user_id: this.user_id,
       })
 
-      this.announcement_list = new Array(count)
-
-      // eslint-disable-next-line no-plusplus
-      for (let offset = (page - 1) * items, i = 0; i < items; offset++, i++) {
-        this.announcement_list[offset] = announcements[i]
-      }
-
-      this.passToSearch = announcements
-      this.rendered_announcements = [...announcements]
+      this.announcement_list = announcements
+      this.isLoading = false
     } catch (e) {
       console.log(e.toString())
     }
-
-    this.isLoading = false
   },
   methods: {
     ...mapActions({
       getAllAnnouncements: announcementTypes.ACTION_GET_ALL_ANNOUNCEMENTS,
       getAnnouncementCount: announcementTypes.ACTION_GET_ANNOUNCEMENTS_COUNT,
+      getFilteredAnnouncements: announcementTypes.ACTION_GET_FILTERED_ANNOUNCEMENTS,
+      bookmarkAnnouncement: announcementTypes.ACTION_BOOKMARK_ANNOUNCEMENT,
+      unbookmarkAnnouncement: announcementTypes.ACTION_UNBOOKMARK_ANNOUNCEMENT,
     }),
     formatDate(date) {
       const months = [
@@ -592,49 +590,82 @@ export default {
       temp = parseFloat(`${temp.join('')}.${x[++i]}`)
       return temp
     },
-    makePagination() {
+    async makePagination() {
+      this.isLoading = true
       // eslint-disable-next-line prefer-destructuring
-      const page = this.page
-      const items = this.perPage
-      this.updateList({ page, items })
+      try {
+        const args = this.filters
+        const count = await this.getAnnouncementCount({
+          args,
+        })
+        this.totalAnnouncements = count
+
+        const announcements = await this.getAllAnnouncements({
+          args: this.filters, user_id: this.user_id,
+        })
+        this.announcement_list = announcements
+      } catch (err) {
+        console.log(err.toString())
+      }
+      this.isLoading = false
     },
-    updateList(params) {
-      // this is to check if the elements to be rendered based on the
-      // pagination are already present
-      const offset = (params.page - 1) * params.items
-      // eslint-disable-next-line camelcase, prefer-const
-      let temp_list = []
-      // eslint-disable-next-line no-plusplus
-      for (let i = offset, j = 0; j < params.items; i++, j++) {
-        if (!this.announcement_list[offset]) {
-          this.isLoading = true
-          break
-        } else {
-          temp_list.push(this.announcement_list[i])
-        }
-      }
-      if (!this.isLoading) {
-        // we need to remove the undefined so as to not accidentally access
-        // invalid index of an array
-        // eslint-disable-next-line camelcase
-        temp_list = temp_list.filter(element => element !== undefined)
-
-        // eslint-disable-next-line camelcase
-        this.rendered_announcements = temp_list
-        return
-      }
-
-      // else, items to be rendered are not yet present, so we
-      // get that from the database
-      this.getAllAnnouncements(params)
+    reset() {
+      this.filters.months = new Date().toLocaleString('default', { month: 'long' })
+      this.filters.years = new Date().getFullYear()
+    },
+    bookmark(announcement_id) {
+      this.bookmarkAnnouncement({ announcement_id, user_id: this.user_id })
         .then(res => {
-          // eslint-disable-next-line no-plusplus, no-shadow
-          for (let offset = (params.page - 1) * params.items, i = 0; i < res.length; offset++, i++) {
-            this.announcement_list[offset] = res[i]
+          if (res.error) {
+            Swal.fire({
+              title: 'Cannot perform action',
+              text: res.error,
+              icon: 'error',
+              confirmButtonClass: 'btn btn-danger',
+              heightAuto: false,
+            })
+          } else {
+            Swal.fire({
+              title: '',
+              text: 'Successfully added to bookmarks',
+              icon: 'success',
+              confirmButtonClass: 'btn btn-primary',
+              heightAuto: false,
+            })
           }
 
-          this.rendered_announcements = res
-          this.isLoading = false
+          this.getAllAnnouncements({ args: this.filters, user_id: this.user_id })
+            .then(announcements => { this.announcement_list = announcements })
+            .catch(err => console.log(err))
+        })
+        .catch(err => {
+          console.log(err.toString())
+        })
+    },
+    unBookmark(announcement_id) {
+      this.unbookmarkAnnouncement({ announcement_id, user_id: this.user_id })
+        .then(res => {
+          if (res.error) {
+            Swal.fire({
+              title: 'Cannot perform action',
+              text: res.error,
+              icon: 'error',
+              confirmButtonClass: 'btn btn-danger',
+              heightAuto: false,
+            })
+          } else {
+            Swal.fire({
+              title: '',
+              text: 'Removed from bookmarks',
+              icon: 'success',
+              confirmButtonClass: 'btn btn-primary',
+              heightAuto: false,
+            })
+          }
+
+          this.getAllAnnouncements({ args: this.filters, user_id: this.user_id })
+            .then(announcements => { this.announcement_list = announcements })
+            .catch(err => console.log(err))
         })
         .catch(err => {
           console.log(err.toString())
