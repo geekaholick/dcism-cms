@@ -41,18 +41,6 @@ const actions = {
         })
     })
   },
-  [types.ACTION_GET_FILTERED_ANNOUNCEMENTS](context, data) {
-    return new Promise(resolve => {
-      Api().get(`/get-filtered-announcements?page=${data.page}&items=${data.items}&q=${data.q}`)
-        .then(resp => {
-          resolve(resp.data)
-        })
-        .catch(err => {
-          context.commit(types.MUTATION_SET_ERROR, err.response.data.errors)
-          resolve(err.response.data.errors)
-        })
-    })
-  },
   [types.ACTION_BOOKMARK_ANNOUNCEMENT](context, data) {
     return new Promise(resolve => {
       Api().post('/bookmark-announcement', data)

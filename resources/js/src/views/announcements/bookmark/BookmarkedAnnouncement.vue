@@ -182,17 +182,6 @@
                   />
                 </template>
                 <b-dropdown-item
-                  v-if="announcement.is_bookmarked != 1"
-                  @click="bookmark(announcement.announcement_id)"
-                >
-                  <feather-icon
-                    size="16"
-                    icon="BookmarkIcon"
-                    class="mr-50"
-                  /> Bookmark this announcement
-                </b-dropdown-item>
-                <b-dropdown-item
-                  v-else
                   @click="unBookmark(announcement.announcement_id)"
                 >
                   <feather-icon
@@ -378,8 +367,8 @@ import { useResponsiveAppLeftSidebarVisibility } from '@core/comp-functions/ui/a
 import { mapGetters, mapActions } from 'vuex'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import Swal from 'sweetalert2'
-import AnnouncementFilter from './AnnouncementFilter.vue'
-import AnnouncementSkeleton from './AnnouncementSkeleton.vue'
+import AnnouncementFilter from '../all/AnnouncementFilter.vue'
+import AnnouncementSkeleton from '../all/AnnouncementSkeleton.vue'
 import * as announcementTypes from '../../../store/announcements/announcementTypes'
 
 export default {
@@ -498,7 +487,6 @@ export default {
     ...mapActions({
       getAllAnnouncements: announcementTypes.ACTION_GET_ALL_ANNOUNCEMENTS,
       getAnnouncementCount: announcementTypes.ACTION_GET_ANNOUNCEMENTS_COUNT,
-      bookmarkAnnouncement: announcementTypes.ACTION_BOOKMARK_ANNOUNCEMENT,
       unbookmarkAnnouncement: announcementTypes.ACTION_UNBOOKMARK_ANNOUNCEMENT,
     }),
     formatDate(date) {
@@ -611,35 +599,6 @@ export default {
     reset() {
       this.filters.months = new Date().toLocaleString('default', { month: 'long' })
       this.filters.years = new Date().getFullYear()
-    },
-    bookmark(announcement_id) {
-      this.bookmarkAnnouncement({ announcement_id, user_id: this.user_id })
-        .then(res => {
-          if (res.error) {
-            Swal.fire({
-              title: 'Cannot perform action',
-              text: res.error,
-              icon: 'error',
-              confirmButtonClass: 'btn btn-danger',
-              heightAuto: false,
-            })
-          } else {
-            Swal.fire({
-              title: '',
-              text: 'Successfully added to bookmarks',
-              icon: 'success',
-              confirmButtonClass: 'btn btn-primary',
-              heightAuto: false,
-            })
-          }
-
-          this.getAllAnnouncements({ args: this.filters, user_id: this.user_id })
-            .then(announcements => { this.announcement_list = announcements })
-            .catch(err => console.log(err))
-        })
-        .catch(err => {
-          console.log(err.toString())
-        })
     },
     unBookmark(announcement_id) {
       this.unbookmarkAnnouncement({ announcement_id, user_id: this.user_id })

@@ -149,4 +149,54 @@ class AnnouncementController extends Controller
                 ])->delete();
 
     }
+
+    public function getAllBookmarksCount(Request $request) {
+
+        return Announcements::join('users', 'users.user_id', '=', 'announcements.user_id')
+        ->join('bookmarks', 'bookmarks.announcement_id', '=', 'announcements.announcement_id')
+        ->where('bookmarks.user_id', '=', $request->user_id)
+        ->where(function ($query) use ($request) {
+            $query->where('title', 'like' , "%$request->q%")
+            ->orWhere('body', 'like' , "%$request->q%")
+            ->orWhere('users.first_name', 'like' , "%$request->q%")
+            ->orWhere('users.last_name', 'like' , "%$request->q%");
+        })
+        ->get([
+            'announcements.announcement_id', 'users.user_id', 'memo_id', 'title',
+            'body', 'comment_no', 'user_email', 'first_name', 'last_name', 
+            'user_image', 'announcements.created_at', 'announcements.updated_at',
+        ])->count();
+    }
+
+    public function getAllBookmarks(Request $request) {
+
+        $announcements = Announcements::join('users', 'users.user_id', '=', 'announcements.user_id')
+            ->join('bookmarks', 'bookmarks.announcement_id', '=', 'announcements.announcement_id')
+            ->where('bookmarks.user_id', '=', $request->user_id)
+            ->where(function ($query) use ($request) {
+                $query->where('title', 'like' , "%$request->q%")
+                ->orWhere('body', 'like' , "%$request->q%")
+                ->orWhere('users.first_name', 'like' , "%$request->q%")
+                ->orWhere('users.last_name', 'like' , "%$request->q%");
+            })
+            ->skip(($request->page - 1) * $request->items)
+            ->take($request->items)
+            ->orderBy('announcements.announcement_id', $request->sort == 'latest' ? 'desc' : 'asc')
+            ->get([
+                'announcements.announcement_id', 'users.user_id', 'memo_id', 'title',
+                'body', 'comment_no', 'user_email', 'first_name', 'last_name', 
+                'user_image', 'announcements.created_at', 'announcements.updated_at',
+            ]);
+
+        foreach ($announcements as $announcement) {
+            $images = AnnouncementImages::where('announcement_id', '=', $announcement->announcement_id)
+                                        ->get(['id', 'announcement_id', 'image_path']);
+            $announcement->images = $images;
+
+            $announcement->is_bookmarked = 1;
+        }
+
+        return $announcements;
+        
+    }
 }

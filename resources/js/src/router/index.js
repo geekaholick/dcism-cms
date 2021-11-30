@@ -66,14 +66,13 @@ const router = new VueRouter({
     {
       path: '/view-bookmarked-announcements',
       name: 'view-bookmarked-announcements',
-      component: () => import('@/views/announcements/all/BookmarkedAnnouncement.vue'),
+      component: () => import('@/views/announcements/bookmark/BookmarkedAnnouncement.vue'),
       meta: {
-        contentRenderer: 'sidebar-left-detached',
         contentClass: 'ecommerce-application',
-        pageTitle: 'All Announcements',
+        pageTitle: 'Bookmarks',
         breadcrumb: [
           {
-            text: 'View All Announcements',
+            text: 'Your Bookmarked Announcements',
             active: true,
           },
         ],
