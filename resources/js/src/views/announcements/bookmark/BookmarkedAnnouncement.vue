@@ -264,16 +264,6 @@
         </b-col>
       </b-row>
     </section>
-
-    <!-- Sidebar -->
-    <portal to="content-renderer-sidebar-detached-left">
-      <announcement-filter
-        :filters="filters"
-        :filter-options="filterOptions"
-        :mq-shall-show-left-sidebar.sync="mqShallShowLeftSidebar"
-        @reset="reset"
-      />
-    </portal>
   </div>
 </template>
 
@@ -367,7 +357,6 @@ import { useResponsiveAppLeftSidebarVisibility } from '@core/comp-functions/ui/a
 import { mapGetters, mapActions } from 'vuex'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import Swal from 'sweetalert2'
-import AnnouncementFilter from '../all/AnnouncementFilter.vue'
 import AnnouncementSkeleton from '../all/AnnouncementSkeleton.vue'
 import * as announcementTypes from '../../../store/announcements/announcementTypes'
 
@@ -395,7 +384,6 @@ export default {
     BPagination,
     BAvatar,
     AnnouncementSkeleton,
-    AnnouncementFilter,
   },
   data() {
     return {
@@ -440,13 +428,10 @@ export default {
         page: 1,
         perPage: 12,
         sortBy: 'latest',
-        months: new Date().toLocaleString('default', { month: 'long' }),
-        years: new Date().getFullYear(),
       },
       isLoading: true,
       totalAnnouncements: 0,
       announcement_list: [],
-      passToSearch: [],
       user_id: 4,
     }
   },
@@ -468,12 +453,12 @@ export default {
     try {
       const args = this.filters
 
-      const count = await this.getAnnouncementCount({
+      const count = await this.getBookmarksCount({
         args,
       })
       this.totalAnnouncements = count
 
-      const announcements = await this.getAllAnnouncements({
+      const announcements = await this.getBookmarks({
         args, user_id: this.user_id,
       })
 
@@ -485,8 +470,8 @@ export default {
   },
   methods: {
     ...mapActions({
-      getAllAnnouncements: announcementTypes.ACTION_GET_ALL_ANNOUNCEMENTS,
-      getAnnouncementCount: announcementTypes.ACTION_GET_ANNOUNCEMENTS_COUNT,
+      getBookmarks: announcementTypes.ACTION_GET_ALL_BOOKMARKED_ANNOUNCEMENTS,
+      getBookmarksCount: announcementTypes.ACTION_GET_BOOKMARKED_ANNOUNCEMENTS_COUNT,
       unbookmarkAnnouncement: announcementTypes.ACTION_UNBOOKMARK_ANNOUNCEMENT,
     }),
     formatDate(date) {
@@ -582,12 +567,12 @@ export default {
       // eslint-disable-next-line prefer-destructuring
       try {
         const args = this.filters
-        const count = await this.getAnnouncementCount({
+        const count = await this.getBookmarksCount({
           args,
         })
         this.totalAnnouncements = count
 
-        const announcements = await this.getAllAnnouncements({
+        const announcements = await this.getBookmarks({
           args: this.filters, user_id: this.user_id,
         })
         this.announcement_list = announcements
@@ -595,10 +580,6 @@ export default {
         console.log(err.toString())
       }
       this.isLoading = false
-    },
-    reset() {
-      this.filters.months = new Date().toLocaleString('default', { month: 'long' })
-      this.filters.years = new Date().getFullYear()
     },
     unBookmark(announcement_id) {
       this.unbookmarkAnnouncement({ announcement_id, user_id: this.user_id })
@@ -621,7 +602,7 @@ export default {
             })
           }
 
-          this.getAllAnnouncements({ args: this.filters, user_id: this.user_id })
+          this.getBookmarks({ args: this.filters, user_id: this.user_id })
             .then(announcements => { this.announcement_list = announcements })
             .catch(err => console.log(err))
         })
