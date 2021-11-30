@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
 
         \App\Models\AnnouncementApproval::factory(5)->create();
         \App\Models\AnnouncementComments::factory(150)->create();
-        \App\Models\Announcements::factory(150)->create();
+        \App\Models\Announcements::factory(10000)->create();
         \App\Models\AnnouncementImages::factory(5)->create();
         \App\Models\Bookmarks::factory(50)->create();
 

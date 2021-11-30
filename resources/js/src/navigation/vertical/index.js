@@ -17,6 +17,10 @@ export default [
         title: 'All Announcements',
         route: 'view-all-announcements',
       },
+      {
+        title: 'Bookmarks',
+        route: 'view-bookmarked-announcements',
+      },
     ],
   },
 ]
