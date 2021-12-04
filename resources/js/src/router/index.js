@@ -25,6 +25,20 @@ const router = new VueRouter({
       },
     },
     {
+      path: '/account-settings',
+      name: 'account-settings',
+      component: () => import('@/views/Student-Setting/AccountSetting.vue'),
+      meta: {
+        pageTitle: 'Account Settings',
+        breadcrumb: [
+          {
+            text: 'Account Settings',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
       path: '/second-page',
       name: 'second-page',
       component: () => import('@/views/SecondPage.vue'),

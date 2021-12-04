@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\StudentSettingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,4 +17,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
-});
+});     
+Route::post('/updatestudinfo',[StudentSettingController::class,'storegeneral'])->name('updatestudentgeneralinfo');
+Route::post('/upload', [StudentSettingController::class, 'upload'])->name('upload');
+Route::get('/studsetting/{id}',[StudentSettingController::class,'get'])->name('viewstudentinfo');
+ROute::put('/changepass',[StudentSettingController::class,'updatepass'])->name('changepassword');
