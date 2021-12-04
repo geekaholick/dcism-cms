@@ -13,6 +13,11 @@ export default [
         route: 'second-page',
         icon: 'FileIcon',
       },
+      {
+        title: 'Account Settings',
+        route: 'account-settings',
+        icon: 'FileIcon',
+      }
     ],
   },
 ]

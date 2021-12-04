@@ -7,7 +7,7 @@
         target="_blank"
       >
         Template Documentation
-      </b-link> to understand where to go from here and how to use our template.</b-card-text>
+      </b-link> ti understand where to go from here and how to use our template.</b-card-text>
     </b-card>
 
     <b-card title="Want to integrate JWT? 🔒">
