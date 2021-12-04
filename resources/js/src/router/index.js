@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
@@ -39,11 +40,41 @@ const router = new VueRouter({
       },
     },
     {
+      path: '/Faculty-Setting',
+      name: 'Faculty-Setting',
+      component: () => import('@/views/Faculty-Setting/AccountSetting.vue'),
+      meta: {
+        pageTitle: 'Account Settings',
+        breadcrumb: [
+          {
+            text: 'Acoount Settings',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
       path: '/login',
       name: 'login',
       component: () => import('@/views/Login.vue'),
       meta: {
         layout: 'full',
+      },
+    },
+    {
+      path: '/view-all-announcements',
+      name: 'view-all-announcements',
+      component: () => import('@/views/announcements/all/AllAnnouncement.vue'),
+      meta: {
+        contentRenderer: 'sidebar-left-detached',
+        contentClass: 'ecommerce-application',
+        pageTitle: 'All Announcements',
+        breadcrumb: [
+          {
+            text: 'View All Announcements',
+            active: true,
+          },
+        ],
       },
     },
     {

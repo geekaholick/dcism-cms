@@ -13,6 +13,11 @@ export default [
         route: 'second-page',
         icon: 'FileIcon',
       },
+      {
+        title: 'Account Settings',
+        route: 'Faculty-Setting',
+        icon: 'FileIcon',
+      },
     ],
   },
 ]
