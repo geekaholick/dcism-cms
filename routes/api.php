@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\FacultySettingController;
 
 use App\Http\Controllers\AnnouncementController;
 
@@ -26,3 +27,10 @@ Route::get('/get-all-announcements-count', [AnnouncementController::class, 'getA
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::get('/facultysetting', [FacultySettingController::class,'retrievepassword']);
+
+Route::post('/changepassword', [FacultySettingController::class,'update']);
+Route::post('/updatefacultyinfo',[FacultySettingController::class,'storegeneralinfo'])->name('updatefacultygeneralinfo');
+Route::post('/upload', [FacultySettingController::class, 'uploadpic'])->name('upload');
+Route::get('/facultygeneralinfo/{id}',[FacultySettingController::class,'get'])->name('viewfacultyinfo');

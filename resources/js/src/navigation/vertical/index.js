@@ -10,12 +10,16 @@ export default [
     icon: 'FileIcon',
   },
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
   {
     title: 'Account Settings',
     route: 'Faculty-Setting',
     icon: 'FileIcon',
   },
+<<<<<<< Updated upstream
   {
     title: 'Announcements',
     icon: 'PackageIcon',
@@ -26,5 +30,7 @@ export default [
       },
     ],
   },
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 ]

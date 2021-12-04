@@ -40,6 +40,20 @@ const router = new VueRouter({
       },
     },
     {
+      path: '/Faculty-Setting',
+      name: 'Faculty-Setting',
+      component: () => import('@/views/Faculty-Setting/AccountSetting.vue'),
+      meta: {
+        pageTitle: 'Account Settings',
+        breadcrumb: [
+          {
+            text: 'Acoount Settings',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
       path: '/login',
       name: 'login',
       component: () => import('@/views/Login.vue'),
