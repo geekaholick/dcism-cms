@@ -2,6 +2,7 @@
   <div class="addUser" v-if="render">
     <b-form
       enctype="multipart/form-data"
+      @submit.prevent="stub()"
     >
       <b>FIRST NAME:</b> <br />
       <b-input
@@ -161,7 +162,7 @@ export default {
     })
     this.first_name = "",
     this.last_name = "",
-    this.role_id = "1",
+    this.role_id = "3",
     this.user_email = "",
     this.user_password = "",
     this.url = false,
@@ -172,7 +173,9 @@ export default {
          this.showDismissibleAlert_email = true;
       }else if(res.data === "image"){
         this.showDismissibleAlert_image = true;
-       }
+      }else{
+        window.location.href ='/StudentManagement';
+      }
     },
     FormState( e ) {
       var data = new FormData();

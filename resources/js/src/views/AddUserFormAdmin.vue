@@ -2,6 +2,7 @@
   <div class="addUser" v-if="render">
     <b-form
       enctype="multipart/form-data"
+      @submit.prevent="stub()"
     >
       <b>FIRST NAME:</b> <br />
       <b-input
@@ -146,6 +147,9 @@ export default {
       this.file = event.target.files[0];
       this.url = URL.createObjectURL(this.file);
     },
+    stub () {
+
+    },
     updateStateReset () {
     this.render = false;
     this.$nextTick(function (){
@@ -164,7 +168,9 @@ export default {
          this.showDismissibleAlert_email = true;
       }else if(res.data === "image"){
         this.showDismissibleAlert_image = true;
-       }
+      }else{
+        window.location.href ='/FacultyManagement';
+      }
     },
     FormState( e ) {
       var data = new FormData();
