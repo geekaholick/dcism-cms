@@ -11,39 +11,31 @@ const router = new VueRouter({
   },
   routes: [
     {
-      path: '/',
-      name: 'home',
-      component: () => import('@/views/Home.vue'),
+      path: '/FacultyManagement',
+      name: 'FacultyManagementApp',
+      component: () => import('@/FacultyManagementApp.vue'),
       meta: {
-        pageTitle: 'Home',
+        pageTitle: 'App',
         breadcrumb: [
           {
-            text: 'Home',
+            text: 'App',
             active: true,
           },
         ],
       },
     },
     {
-      path: '/second-page',
-      name: 'second-page',
-      component: () => import('@/views/SecondPage.vue'),
+      path: '/StudentManagement',
+      name: 'StudentManagementApp',
+      component: () => import('@/StudentManagementApp.vue'),
       meta: {
-        pageTitle: 'Second Page',
+        pageTitle: 'App2',
         breadcrumb: [
           {
-            text: 'Second Page',
+            text: 'App2',
             active: true,
           },
         ],
-      },
-    },
-    {
-      path: '/login',
-      name: 'login',
-      component: () => import('@/views/Login.vue'),
-      meta: {
-        layout: 'full',
       },
     },
     {
@@ -53,7 +45,7 @@ const router = new VueRouter({
       meta: {
         layout: 'full',
       },
-    },
+    },  
     {
       path: '*',
       redirect: 'error-404',
