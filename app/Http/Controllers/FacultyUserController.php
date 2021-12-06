@@ -45,7 +45,7 @@ class FacultyUserController extends Controller
         if($validator->fails()){
             return "image";
         }else{
-            $rules = array('user_email' => 'unique:users,user_email');
+            $rules = array('user_email' => 'unique:users,user_email','email:rfc,dns');
             $validator = Validator::make($request->all(), [
                 'user_email' => $rules
             ]);
@@ -124,7 +124,7 @@ class FacultyUserController extends Controller
             $imageFileName =  "/"."storage"."/".($request->user_image->getClientOriginalname());
         }
         }
-            $rules = array('user_email' => 'unique:users,user_email,'.$id.',user_id');
+            $rules = array('user_email' => 'unique:users,user_email,'.$id.',user_id','email:rfc,dns');
             $validator = Validator::make($request->all(), [
                 'user_email' => $rules
             ]);

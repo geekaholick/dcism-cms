@@ -33,7 +33,7 @@
       >
       </b-input>
       <b-alert id="alert" v-model="showDismissibleAlert_email" variant="danger" dismissible fade>
-      <b id="alertcontent">EMAIL ALREADY TAKEN</b>
+      <b id="alertcontent">Email invalid or taken</b>
       </b-alert> <br />
 
       <b>PASSWORD:</b> <br />
@@ -239,6 +239,7 @@ export default {
       this.role_id = this.User.role_id;
       this.user_email = this.User.user_email;
       this.user_password = this.User.user_password;
+      this.file = this.User.user_image;
       this.url = this.User.user_image;
       this.toggle = false;
       this.file_input = false;
