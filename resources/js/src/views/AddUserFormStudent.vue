@@ -33,7 +33,7 @@
       >
       </b-input>
       <b-alert id="alert" v-model="showDismissibleAlert_email" variant="danger" dismissible fade>
-      <b id="alertcontent">EMAIL ALREADY TAKEN</b>
+      <b id="alertcontent">Email invalid or taken</b>
       </b-alert> <br />
 
       <b>PASSWORD:</b> <br />
