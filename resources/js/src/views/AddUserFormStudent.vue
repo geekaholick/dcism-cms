@@ -244,6 +244,7 @@ export default {
       this.role_id = this.User.role_id;
       this.user_email = this.User.user_email;
       this.user_password = this.User.user_password;
+      this.file = this.User.user_image;
       this.url = this.User.user_image;
       this.toggle = false;
       this.file_input = false;
