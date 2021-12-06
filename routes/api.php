@@ -16,4 +16,13 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
+<<<<<<< Updated upstream
 });
+=======
+});     
+Route::post('/updatestudinfo',[StudentSettingController::class,'storegeneral'])->name('updatessz    swsqtudentgeneralinfo');
+Route::post('/upload', [StudentSettingController::class, 'upload'])->name('upload');
+Route::get('/studsetting/{id}',[StudentSettingController::class,'get'])->name('viewstudentinfo');
+Route::put('/changepass',[StudentSettingController::class,'updatepass'])->name('changepassword');
+Route::put('/checkpass',[StudentSettingController::class,'passchecker'])->name('passwordchecker');
+>>>>>>> Stashed changes
