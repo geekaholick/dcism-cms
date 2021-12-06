@@ -14,4 +14,5 @@ use App\Http\Controllers\ApplicationController;
 |
 */
 
-Route::get('/{any}', [ApplicationController::class, 'index'])->where('any', '.*');
+Route::get('/FacultyManagement', [ApplicationController::class, 'index'])->where('any', '.*');
+Route::get('/StudentManagement', [ApplicationController::class, 'index2'])->where('any', '.*');
