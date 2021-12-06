@@ -25,14 +25,56 @@ const router = new VueRouter({
       },
     },
     {
-      path: '/second-page',
-      name: 'second-page',
-      component: () => import('@/views/SecondPage.vue'),
+      path: '/memos',
+      name: 'Memos',
+      component: () => import('@/views/Memo/Memos.vue'),
       meta: {
-        pageTitle: 'Second Page',
+        pageTitle: 'Memos',
         breadcrumb: [
           {
-            text: 'Second Page',
+            text: 'Memos',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/memos/create',
+      name: 'MemoCreate',
+      component: () => import('@/views/Memo/MemoCreate.vue'),
+      meta: {
+        pageTitle: 'Create Memo',
+        breadcrumb: [
+          {
+            text: 'Create Memo',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/memos/show/:id',
+      name: 'MemoDetails',
+      component: () => import('@/views/Memo/MemoDetails.vue'),
+      meta: {
+        pageTitle: 'Memo Details',
+        breadcrumb: [
+          {
+            text: 'Memo Details',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/memos/edit/:id',
+      name: 'MemoEdit',
+      component: () => import('@/views/Memo/MemoEdit.vue'),
+      meta: {
+        pageTitle: 'Update Memo',
+        breadcrumb: [
+          {
+            text: 'Update Memo',
             active: true,
           },
         ],

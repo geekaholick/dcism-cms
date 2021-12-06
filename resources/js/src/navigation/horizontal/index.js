@@ -9,8 +9,8 @@ export default [
         icon: 'HomeIcon',
       },
       {
-        title: 'Second Page',
-        route: 'second-page',
+        title: 'Memos',
+        route: 'Memos',
         icon: 'FileIcon',
       },
     ],
