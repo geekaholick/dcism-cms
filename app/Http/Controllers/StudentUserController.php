@@ -134,8 +134,13 @@ class StudentUserController extends Controller
                 if (!(File::exists(public_path($request->user_image)))) {
                     $imageFileName =  $request->user_image->getClientOriginalname();
                     $path = $request->file('user_image')->storeAs('public', $imageFileName);
+                    $imageFileName =  "/"."storage"."/".$imageFileName;
+                }else{
+                    if(!(is_string($request->user_image))){
+                    $imageFileName =  $request->user_image->getClientOriginalname();
+                    $imageFileName =  "/"."storage"."/".$imageFileName;
+                    }   
                 }
-                $imageFileName =  "/"."storage"."/".($imageFileName);
         $existingUser = new User;
         $existingUser = new User;
         $existingUser = DB::table('users')
