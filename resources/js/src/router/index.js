@@ -2,6 +2,11 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
+// Routes
+import store from '@/store/index'
+import { canNavigate } from '@/libs/acl/routeProtection'
+import { isUserLoggedIn, getHomeRouteForLoggedInUser, getUserRole } from '@/auth/utils'
+
 Vue.use(VueRouter)
 
 const router = new VueRouter({
@@ -23,6 +28,7 @@ const router = new VueRouter({
             active: true,
           },
         ],
+        requiresAuth: true,
       },
     },
     {
@@ -45,6 +51,8 @@ const router = new VueRouter({
       component: () => import('@/views/Login.vue'),
       meta: {
         layout: 'full',
+        resource: 'Auth',
+        redirectIfLoggedIn: true,
       },
     },
     {
@@ -76,6 +84,26 @@ const router = new VueRouter({
       redirect: 'error-404',
     },
   ],
+})
+
+router.beforeEach((to, from, next) => {
+  const isLoggedIn = isUserLoggedIn()
+
+  if (!canNavigate(to)) {
+    // Redirect to login if not logged in
+    if (!isLoggedIn) return next({ name: 'login' })
+
+    // If logged in => not authorized
+    return next()
+  }
+
+  // Redirect if logged in
+  if (to.meta.redirectIfLoggedIn && isLoggedIn) {
+    const userRole = getUserRole()
+    next(getHomeRouteForLoggedInUser(userRole))
+  }
+
+  return next()
 })
 
 // ? For splash screen

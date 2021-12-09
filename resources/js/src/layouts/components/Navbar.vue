@@ -83,12 +83,16 @@
         <b-dropdown-divider />
 
         <b-dropdown-item link-class="d-flex align-items-center">
-          <feather-icon
-            size="16"
-            icon="LogOutIcon"
-            class="mr-50"
-          />
-          <span>Logout</span>
+          <b-link
+            @click="logout"
+          >
+            <feather-icon
+              size="16"
+              icon="LogOutIcon"
+              class="mr-50"
+            />
+            <span>Logout</span>
+          </b-link>
         </b-dropdown-item>
       </b-nav-item-dropdown>
     </b-navbar-nav>
@@ -100,6 +104,9 @@ import {
   BLink, BNavbarNav, BNavItemDropdown, BDropdownItem, BDropdownDivider, BAvatar,
 } from 'bootstrap-vue'
 import DarkToggler from '@core/layouts/components/app-navbar/components/DarkToggler.vue'
+import { initialAbility } from '@/libs/acl/config'
+import axios from 'axios'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 
 export default {
   components: {
@@ -117,6 +124,34 @@ export default {
     toggleVerticalMenuActive: {
       type: Function,
       default: () => {},
+    },
+  },
+  methods: {
+    logout() {
+      axios.get('/api/auth/logout', {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: localStorage.getItem('token_type') + ' ' + localStorage.getItem('access_token'),
+        },
+      }).then(res => {
+        localStorage.removeItem('access_token')
+        localStorage.removeItem('token_type')
+        localStorage.removeItem('role_id')
+        this.$router.push({ name: 'login' }).then(() => {
+          this.$toast({
+            component: ToastificationContent,
+            position: 'top-right',
+            props: {
+              title: 'Alert!',
+              icon: 'AlertCircleIcon',
+              variant: 'success',
+              text: 'You have successfully logged out',
+            },
+          })
+        })
+      }).catch(error => {
+        console.log('ERRRR::', error.response.data)
+      })
     },
   },
 }
