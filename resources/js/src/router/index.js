@@ -64,6 +64,22 @@ const router = new VueRouter({
       },
     },
     {
+      path: '/user-role-privilege-management',
+      name: 'user-role-privilege-management',
+      component: () => import('@/views/UserRolePrivilegeManagement/UserRolePrivilegeApp.vue'),
+      meta: {
+       // contentRenderer: 'sidebar-left-detached',
+        //contentClass: 'ecommerce-application',
+        pageTitle: 'User Role Management',
+        breadcrumb: [
+          {
+            text: 'User Role Management',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
       path: '/error-404',
       name: 'error-404',
       component: () => import('@/views/error/Error404.vue'),

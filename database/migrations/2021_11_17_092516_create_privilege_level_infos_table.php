@@ -15,8 +15,7 @@ class CreatePrivilegeLevelInfosTable extends Migration
     {
         Schema::create('privilege_level_infos', function (Blueprint $table) {
             $table->id('privilege_id');
-            // someone assigned to UserRoleManagement
-            // please add column permissions here
+            $table->string('permission');
             $table->timestamps();
         });
     }

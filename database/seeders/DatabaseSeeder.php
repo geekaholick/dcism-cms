@@ -17,7 +17,7 @@ class DatabaseSeeder extends Seeder
         \App\Models\Roles::factory(3)->create();
         \App\Models\UserPrivileges::factory(5)->create();
         // uncomment this when we have column names for this Model
-        // \App\Models\PrivilegeLevelInfo::factory(3)->create();
+        \App\Models\PrivilegeLevelInfo::factory(3)->create();
 
 
         \App\Models\AnnouncementApproval::factory(5)->create();

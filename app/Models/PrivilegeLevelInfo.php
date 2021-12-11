@@ -11,8 +11,9 @@ class PrivilegeLevelInfo extends Model
     // to the person assigned to User Role Management,
     // please specify column names for privilege_level_infos
     // that can be passed as arguments when invoking this Model
+    protected $primaryKey="privilege_id";
     protected $fillable = [
-        
+        'permission',
     ];
 
 }
