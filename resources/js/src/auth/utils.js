@@ -13,6 +13,8 @@ export const isUserLoggedIn = () => {
 
 export const getUserRole = () => localStorage.getItem('role_id')
 
+export const hasRequestedPassReset = () => localStorage.getItem('reset_password_token')
+
 /**
  * This function is used for demo purpose route navigation
  * In real app you won't need this function because your app will navigate to same route for each users regardless of ability

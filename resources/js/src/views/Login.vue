@@ -81,9 +81,9 @@
               <b-form-group>
                 <div class="d-flex justify-content-between">
                   <label for="login-password">Password</label>
-                  <!-- <b-link :to="{name:'auth-forgot-password-v2'}">
+                  <b-link :to="{name:'auth-forgot-password'}">
                     <small>Forgot Password?</small>
-                  </b-link> -->
+                  </b-link>
                 </div>
                 <validation-provider
                   #default="{ errors }"
@@ -115,25 +115,18 @@
                 </validation-provider>
               </b-form-group>
 
-              <!-- checkbox -->
-              <!-- <b-form-group>
-                <b-form-checkbox
-                  id="remember-me"
-                  v-model="status"
-                  name="checkbox-1"
-                >
-                  Remember Me
-                </b-form-checkbox>
-              </b-form-group> -->
-
               <!-- submit buttons -->
               <b-button
                 type="submit"
                 variant="primary"
                 block
-                :disabled="invalid"
+                :disabled="invalid || loading"
               >
-                Sign in
+                <b-spinner
+                  v-if="loading"
+                  small
+                />
+                {{ loading ? " Loading..." : "Sign in" }}
               </b-button>
             </b-form>
           </validation-observer>
@@ -150,6 +143,7 @@ import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import VuexyLogo from '@core/layouts/components/Logo.vue'
 import {
   BRow, BCol, BLink, BFormGroup, BFormInput, BInputGroupAppend, BInputGroup, BFormCheckbox, BCardText, BCardTitle, BImg, BForm, BButton,
+  BSpinner
 } from 'bootstrap-vue'
 import { required, email } from '@validations'
 import { togglePasswordVisibility } from '@core/mixins/ui/forms'
@@ -177,6 +171,7 @@ export default {
     VuexyLogo,
     ValidationProvider,
     ValidationObserver,
+    BSpinner,
   },
   mixins: [togglePasswordVisibility],
   data() {
@@ -184,6 +179,7 @@ export default {
       status: '',
       password: '',
       userEmail: '',
+      loading: false,
       sideImg: require('@/assets/images/pages/login-v2.svg'),
       // validation rulesimport store from '@/store/index'
       required,
@@ -205,6 +201,7 @@ export default {
   },
   methods: {
     login() {
+      this.loading = true
       // Form Validation
       this.$refs.loginForm.validate().then(success => {
         if (success) {
@@ -214,6 +211,7 @@ export default {
           }).then(res => {
             localStorage.setItem('access_token', res.data.access_token)
             localStorage.setItem('token_type', res.data.token_type)
+            if (localStorage.getItem('reset_password_token')) { localStorage.removeItem('reset_password_token') }
             axios.get('/api/auth/user', {
               headers: {
                 'Content-Type': 'application/json',
@@ -235,19 +233,8 @@ export default {
                 },
               })
             })
-            // this.$router.replace(getHomeRouteForLoggedInUser(localStorage.getItem('role_id'))).then(() => {
-            //   this.$toast({
-            //     component: ToastificationContent,
-            //     position: 'top-right',
-            //     props: {
-            //       title: `Welcome ${this.$store.getters['user/getFirstName']} ${this.$store.getters['user/getLastName']}`,
-            //       icon: 'CoffeeIcon',
-            //       variant: 'success',
-            //       text: `You have successfully logged in as ${this.$store.getters['user/getRoleName']}.`,
-            //     },
-            //   })
-            // })
           }).catch(error => {
+            this.loading = false
             this.$toast({
               component: ToastificationContent,
               position: 'top-right',

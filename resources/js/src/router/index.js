@@ -5,9 +5,11 @@ import VueRouter from 'vue-router'
 // Routes
 import store from '@/store/index'
 import { canNavigate } from '@/libs/acl/routeProtection'
-import { isUserLoggedIn, getHomeRouteForLoggedInUser, getUserRole } from '@/auth/utils'
+import { isUserLoggedIn, getHomeRouteForLoggedInUser, getUserRole, hasRequestedPassReset } from '@/auth/utils'
 
 Vue.use(VueRouter)
+
+const resetpasstoken = localStorage.getItem('reset_password_token')
 
 const router = new VueRouter({
   mode: 'history',
@@ -56,6 +58,26 @@ const router = new VueRouter({
       },
     },
     {
+      path: '/forgot-password',
+      name: 'auth-forgot-password',
+      component: () => import('@/views/password-reset/ForgotPassword.vue'),
+      meta: {
+        layout: 'full',
+        resource: 'Auth',
+        redirectIfLoggedIn: true,
+      },
+    },
+    {
+      path: `/reset-password/${resetpasstoken}`,
+      name: 'reset-password',
+      component: () => import('@/views/password-reset/ResetPassword.vue'),
+      meta: {
+        layout: 'full',
+        redirectToResetPass: true,
+        redirectIfLoggedIn: true,
+      },
+    },
+    {
       path: '/view-all-announcements',
       name: 'view-all-announcements',
       component: () => import('@/views/announcements/all/AllAnnouncement.vue'),
@@ -89,6 +111,11 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   const isLoggedIn = isUserLoggedIn()
 
+  // Redirect if reset password is needed && !isLoggedIn
+  if (to.meta.redirectToResetPass && hasRequestedPassReset) {
+    return next()
+  }
+
   if (!canNavigate(to)) {
     // Redirect to login if not logged in
     if (!isLoggedIn) return next({ name: 'login' })
@@ -104,6 +131,7 @@ router.beforeEach((to, from, next) => {
   }
 
   return next()
+  // return next({ name: 'login' })
 })
 
 // ? For splash screen
