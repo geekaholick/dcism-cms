@@ -6,7 +6,7 @@
       <b-link class="brand-logo">
         <vuexy-logo />
         <h2 class="brand-text text-primary ml-1">
-          Vuexy
+          DCISM
         </h2>
       </b-link>
       <!-- /Brand logo-->
@@ -41,17 +41,20 @@
             title-tag="h2"
             class="font-weight-bold mb-1"
           >
-            Welcome to Vuexy! 👋
+            Welcome to DCISM Portal! 💻
           </b-card-title>
           <b-card-text class="mb-2">
-            Please sign-in to your account and start the adventure
+            Please sign-in to your account to access the portal
           </b-card-text>
 
           <!-- form -->
-          <validation-observer ref="loginValidation">
+          <validation-observer
+            ref="loginForm"
+            #default="{invalid}"
+          >
             <b-form
               class="auth-login-form mt-2"
-              @submit.prevent
+              @submit.prevent="login"
             >
               <!-- email -->
               <b-form-group
@@ -78,7 +81,7 @@
               <b-form-group>
                 <div class="d-flex justify-content-between">
                   <label for="login-password">Password</label>
-                  <b-link :to="{name:'auth-forgot-password-v2'}">
+                  <b-link :to="{name:'auth-forgot-password'}">
                     <small>Forgot Password?</small>
                   </b-link>
                 </div>
@@ -112,70 +115,21 @@
                 </validation-provider>
               </b-form-group>
 
-              <!-- checkbox -->
-              <b-form-group>
-                <b-form-checkbox
-                  id="remember-me"
-                  v-model="status"
-                  name="checkbox-1"
-                >
-                  Remember Me
-                </b-form-checkbox>
-              </b-form-group>
-
               <!-- submit buttons -->
               <b-button
                 type="submit"
                 variant="primary"
                 block
-                @click="validationForm"
+                :disabled="invalid || loading"
               >
-                Sign in
+                <b-spinner
+                  v-if="loading"
+                  small
+                />
+                {{ loading ? " Loading..." : "Sign in" }}
               </b-button>
             </b-form>
           </validation-observer>
-
-          <b-card-text class="text-center mt-2">
-            <span>New on our platform? </span>
-            <b-link :to="{name:'page-auth-register-v2'}">
-              <span>&nbsp;Create an account</span>
-            </b-link>
-          </b-card-text>
-
-          <!-- divider -->
-          <div class="divider my-2">
-            <div class="divider-text">
-              or
-            </div>
-          </div>
-
-          <!-- social buttons -->
-          <div class="auth-footer-btn d-flex justify-content-center">
-            <b-button
-              variant="facebook"
-              href="javascript:void(0)"
-            >
-              <feather-icon icon="FacebookIcon" />
-            </b-button>
-            <b-button
-              variant="twitter"
-              href="javascript:void(0)"
-            >
-              <feather-icon icon="TwitterIcon" />
-            </b-button>
-            <b-button
-              variant="google"
-              href="javascript:void(0)"
-            >
-              <feather-icon icon="MailIcon" />
-            </b-button>
-            <b-button
-              variant="github"
-              href="javascript:void(0)"
-            >
-              <feather-icon icon="GithubIcon" />
-            </b-button>
-          </div>
         </b-col>
       </b-col>
     <!-- /Login-->
@@ -189,11 +143,15 @@ import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import VuexyLogo from '@core/layouts/components/Logo.vue'
 import {
   BRow, BCol, BLink, BFormGroup, BFormInput, BInputGroupAppend, BInputGroup, BFormCheckbox, BCardText, BCardTitle, BImg, BForm, BButton,
+  BSpinner
 } from 'bootstrap-vue'
 import { required, email } from '@validations'
 import { togglePasswordVisibility } from '@core/mixins/ui/forms'
-import store from '@/store/index'
+import { getHomeRouteForLoggedInUser } from '@/auth/utils'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+
+import store from '@/store/index'
+import axios from 'axios'
 
 export default {
   components: {
@@ -213,6 +171,7 @@ export default {
     VuexyLogo,
     ValidationProvider,
     ValidationObserver,
+    BSpinner,
   },
   mixins: [togglePasswordVisibility],
   data() {
@@ -220,6 +179,7 @@ export default {
       status: '',
       password: '',
       userEmail: '',
+      loading: false,
       sideImg: require('@/assets/images/pages/login-v2.svg'),
       // validation rulesimport store from '@/store/index'
       required,
@@ -240,16 +200,51 @@ export default {
     },
   },
   methods: {
-    validationForm() {
-      this.$refs.loginValidation.validate().then(success => {
+    login() {
+      this.loading = true
+      // Form Validation
+      this.$refs.loginForm.validate().then(success => {
         if (success) {
-          this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'Form Submitted',
-              icon: 'EditIcon',
-              variant: 'success',
-            },
+          axios.post('/api/auth/login', {
+            email: this.userEmail,
+            password: this.password,
+          }).then(res => {
+            localStorage.setItem('access_token', res.data.access_token)
+            localStorage.setItem('token_type', res.data.token_type)
+            if (localStorage.getItem('reset_password_token')) { localStorage.removeItem('reset_password_token') }
+            axios.get('/api/auth/user', {
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: localStorage.getItem('token_type') + ' ' + localStorage.getItem('access_token'),
+              },
+            }).then(response => {
+              localStorage.setItem('role_id', response.data.role_id)
+            })
+            this.$store.dispatch('user/setLoginUserData', null, { root: true })
+            this.$router.push({ name: 'home' }).then(() => {
+              this.$toast({
+                component: ToastificationContent,
+                position: 'top-right',
+                props: {
+                  title: 'Welcome!',
+                  icon: 'CoffeeIcon',
+                  variant: 'success',
+                  text: 'You have successfully logged in.',
+                },
+              })
+            })
+          }).catch(error => {
+            this.loading = false
+            this.$toast({
+              component: ToastificationContent,
+              position: 'top-right',
+              props: {
+                title: 'Alert!',
+                icon: 'AlertCircleIcon',
+                variant: 'danger',
+                text: 'You have entered the wrong email/password',
+              },
+            })
           })
         }
       })

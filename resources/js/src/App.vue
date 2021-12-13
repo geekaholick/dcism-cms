@@ -83,6 +83,7 @@ export default {
       closeButton: false,
       icon: false,
       timeout: 3000,
+      draggable: true,
       transition: 'Vue-Toastification__fade',
     })
 

@@ -1,4 +1,5 @@
-import useJwt from '@/auth/jwt/useJwt'
+import axios from 'axios'
+import store from '@/store/index'
 
 /**
  * Return if user is logged in
@@ -7,10 +8,12 @@ import useJwt from '@/auth/jwt/useJwt'
  */
 // eslint-disable-next-line arrow-body-style
 export const isUserLoggedIn = () => {
-  return localStorage.getItem('userData') && localStorage.getItem(useJwt.jwtConfig.storageTokenKeyName)
+  return localStorage.getItem('access_token')
 }
 
-export const getUserData = () => JSON.parse(localStorage.getItem('userData'))
+export const getUserRole = () => localStorage.getItem('role_id')
+
+export const hasRequestedPassReset = () => localStorage.getItem('reset_password_token')
 
 /**
  * This function is used for demo purpose route navigation
@@ -21,7 +24,9 @@ export const getUserData = () => JSON.parse(localStorage.getItem('userData'))
  * @param {String} userRole Role of user
  */
 export const getHomeRouteForLoggedInUser = userRole => {
-  if (userRole === 'admin') return '/'
-  if (userRole === 'client') return { name: 'access-control' }
-  return { name: 'auth-login' }
+  if (userRole == 1) return { name: 'home' }
+  // Head
+  // if (userRole == 2) return *insert appropriate route* //Faculty
+  // if (userRole == 3) return *insert appropriate route* //Student
+  return { name: 'login' }
 }

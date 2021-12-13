@@ -1,7 +1,15 @@
+/* eslint-disable import/no-unresolved */
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
+// Routes
+import store from '@/store/index'
+import { canNavigate } from '@/libs/acl/routeProtection'
+import { isUserLoggedIn, getHomeRouteForLoggedInUser, getUserRole, hasRequestedPassReset } from '@/auth/utils'
+
 Vue.use(VueRouter)
+
+const resetpasstoken = localStorage.getItem('reset_password_token')
 
 const router = new VueRouter({
   mode: 'history',
@@ -22,6 +30,7 @@ const router = new VueRouter({
             active: true,
           },
         ],
+        requiresAuth: true,
       },
     },
     {
@@ -44,6 +53,44 @@ const router = new VueRouter({
       component: () => import('@/views/Login.vue'),
       meta: {
         layout: 'full',
+        resource: 'Auth',
+        redirectIfLoggedIn: true,
+      },
+    },
+    {
+      path: '/forgot-password',
+      name: 'auth-forgot-password',
+      component: () => import('@/views/password-reset/ForgotPassword.vue'),
+      meta: {
+        layout: 'full',
+        resource: 'Auth',
+        redirectIfLoggedIn: true,
+      },
+    },
+    {
+      path: `/reset-password/${resetpasstoken}`,
+      name: 'reset-password',
+      component: () => import('@/views/password-reset/ResetPassword.vue'),
+      meta: {
+        layout: 'full',
+        redirectToResetPass: true,
+        redirectIfLoggedIn: true,
+      },
+    },
+    {
+      path: '/view-all-announcements',
+      name: 'view-all-announcements',
+      component: () => import('@/views/announcements/all/AllAnnouncement.vue'),
+      meta: {
+        contentRenderer: 'sidebar-left-detached',
+        contentClass: 'ecommerce-application',
+        pageTitle: 'All Announcements',
+        breadcrumb: [
+          {
+            text: 'View All Announcements',
+            active: true,
+          },
+        ],
       },
     },
     {
@@ -59,6 +106,32 @@ const router = new VueRouter({
       redirect: 'error-404',
     },
   ],
+})
+
+router.beforeEach((to, from, next) => {
+  const isLoggedIn = isUserLoggedIn()
+
+  // Redirect if reset password is needed && !isLoggedIn
+  if (to.meta.redirectToResetPass && hasRequestedPassReset) {
+    return next()
+  }
+
+  if (!canNavigate(to)) {
+    // Redirect to login if not logged in
+    if (!isLoggedIn) return next({ name: 'login' })
+
+    // If logged in => not authorized
+    return next()
+  }
+
+  // Redirect if logged in
+  if (to.meta.redirectIfLoggedIn && isLoggedIn) {
+    const userRole = getUserRole()
+    next(getHomeRouteForLoggedInUser(userRole))
+  }
+
+  return next()
+  // return next({ name: 'login' })
 })
 
 // ? For splash screen
