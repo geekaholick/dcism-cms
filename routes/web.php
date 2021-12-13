@@ -15,3 +15,5 @@ use App\Http\Controllers\ApplicationController;
 */
 
 Route::get('/{any}', [ApplicationController::class, 'index'])->where('any', '.*');
+Route::get('send', 'ApplicationController@sendNotification');
+
