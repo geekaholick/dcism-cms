@@ -19,8 +19,8 @@ class UserRolePrivilegeController extends Controller
     {
         //
         return User::join('roles','users.role_id', '=','roles.role_id')
-                    ->join('user_privileges','users.user_id','=','user_privileges.user_id')
-                    ->join('privilege_level_infos','user_privileges.privilege_id','=','privilege_level_infos.privilege_id')
+                    ->select('user_id','last_name','first_name','type')
+                    ->orderBy('last_name','ASC')
                     ->get();
     }
 
