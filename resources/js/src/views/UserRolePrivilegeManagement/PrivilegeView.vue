@@ -13,6 +13,7 @@
         <privilege-list 
           :privilege="privilege"
           class="privilege"
+          v-on:privilegeChanged="$emit('reloadPList')"
         />
     </div>
   </div>
@@ -46,6 +47,7 @@ export default {
       .then(response => {
           if(response.status == 201){
             this.privilege.permission = "";
+            this.$emit('reloadPList');
           }
       })
       .catch(error => {
@@ -67,3 +69,4 @@ export default {
       color: #999999;
     }
 </style>
+

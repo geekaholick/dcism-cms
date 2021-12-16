@@ -6,12 +6,14 @@
         <b-modal id="privilege-modal">
           <privilege-view 
             :privileges="privileges"
+            v-on:reloadPList="getPrivileges()"
           />
         </b-modal>
         <b-button v-b-modal.role-modal>View Roles</b-button>
         <b-modal id="role-modal">
           <role-view 
             :roles="roles"
+            v-on:reloadRList="getRoles()"
           />
         </b-modal>
       </div>
@@ -19,6 +21,7 @@
         <h2>DataTable</h2>
         <user-data-table
           :userData="userData"
+          
         />
       </div>
   </div>
@@ -27,7 +30,6 @@
 <script>
 import PrivilegeView from "./PrivilegeView"
 import RoleView from "./RoleView"
-import RolesPrivilege from "./RolesPrivilege"
 import UserDataTable from "./UserDataTable"
 import axios from 'axios'
 
@@ -36,8 +38,7 @@ export default {
   components:{
       PrivilegeView,
       RoleView,
-      RolesPrivilege,
-      UserDataTable
+      UserDataTable,
   },
   data: function() {
     return{

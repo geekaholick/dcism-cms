@@ -41,9 +41,11 @@ Route::prefix('/privilege')->group( function() {
 });
 
 Route::prefix('/user-role-privilege')->group( function() {
-    Route::post('/store', [UserRolePrivilegeController::class, 'store']);
-    Route::put('/{id}', [UserRolePrivilegeController::class, 'update']);
+    Route::post('/store/{id}/{id2}', [UserRolePrivilegeController::class, 'store']);
+    Route::put('/{id}/{id2}', [UserRolePrivilegeController::class, 'update']);
     Route::delete('/{id}', [UserRolePrivilegeController::class, 'destroy']);
+    Route::get('/{id}', [UserRolePrivilegeController::class, 'show']);
+    Route::get('/show2/{id}', [UserRolePrivilegeController::class, 'show2']);
 });
 //User Role and Privilege Management Routes//
 

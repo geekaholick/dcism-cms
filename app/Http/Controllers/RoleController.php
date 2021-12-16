@@ -17,6 +17,7 @@ class RoleController extends Controller
     public function index()
     {
         return Roles::orderBy('type', 'ASC')->get();
+
     }
 
     /**

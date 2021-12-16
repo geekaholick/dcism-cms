@@ -17,6 +17,7 @@ export default {
           axios.delete('api/privilege/' + this.privilege.privilege_id)
           .then(response=>{
               if(response.status == 200){
+                  this.$emit('privilegeChanged');
               }
           })
           .catch (error=>{

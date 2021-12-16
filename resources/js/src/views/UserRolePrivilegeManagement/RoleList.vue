@@ -17,6 +17,7 @@ export default {
           axios.delete('api/role/' + this.role.role_id)
           .then(response=>{
               if(response.status == 200){
+                  this.$emit('itemChanged');
               }
           })
           .catch (error=>{

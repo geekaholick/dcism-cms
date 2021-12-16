@@ -14,6 +14,7 @@
         <role-list 
           :role="role"
           class="role"
+          v-on:itemChanged="$emit('reloadRList')"
         />
     </div>
   </div>
@@ -22,7 +23,6 @@
 <script>
 import RoleList from "./RoleList"
 import axios from 'axios'
-
 
 export default {
   props: ['roles'],
@@ -47,6 +47,7 @@ export default {
       .then(response => {
           if(response.status == 201){
             this.role.type = "";
+            this.$emit('reloadRList');
           }
       })
       .catch(error => {
