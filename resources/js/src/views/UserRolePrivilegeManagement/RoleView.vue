@@ -1,8 +1,7 @@
 <template>
-  <div class="container pt-3 pb-5">
-    <h2>Role</h2>
+  <div class="container">
     <div class="addRole">
-      <input type="text" v-model="role.type" />
+      <input type="text" id="roleInput" placeholder="Add new role" v-model="role.type" />
       <font-awesome-icon 
         icon="plus-square"
         @click="addRole()"
@@ -10,7 +9,7 @@
       />
 
     </div>
-    <div v-for="(role, index) in roles" :key="index">
+    <div class="roles" v-for="(role, index) in roles" :key="index">
         <role-list 
           :role="role"
           class="role"
@@ -67,5 +66,12 @@ export default {
     }
     .inactive{
       color: #999999;
+    }
+    .roles{
+      padding: 10px 10px 10px 10px;
+      float: left;
+    }
+    .addRole{
+      padding: 10px 10px 10px 0px;
     }
 </style>

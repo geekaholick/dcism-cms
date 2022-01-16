@@ -1,15 +1,14 @@
 <template>
-  <div class="container pt-3 pb-5">
-    <h2>Privilege</h2>
+  <div class="container">
     <div class="addPrivilege">
-      <input type="text" v-model="privilege.permission" />
+      <input type="text" id="privilegeInput" placeholder="Add new role" v-model="privilege.permission" />
       <font-awesome-icon 
         icon="plus-square"
         @click="addPrivilege()"
         :class="[privilege.permission ? 'active' : 'inactive', 'plus']"
       />
     </div>
-    <div v-for="(privilege, index) in privileges" :key="index">
+    <div class="privileges" v-for="(privilege, index) in privileges" :key="index">
         <privilege-list 
           :privilege="privilege"
           class="privilege"
@@ -67,6 +66,13 @@ export default {
     }
     .inactive{
       color: #999999;
+    }
+    .privileges{
+      padding: 10px 10px 10px 10px;
+
+    }
+    .addPrivilege{
+      padding: 10px 10px 10px 0px;
     }
 </style>
 

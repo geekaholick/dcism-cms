@@ -35,4 +35,9 @@ export default {
         color: #FF0000;
         outline: none;
     }
+    span{
+        font-size: 20px;
+        font-style: normal;
+        color: black;
+    }
 </style>

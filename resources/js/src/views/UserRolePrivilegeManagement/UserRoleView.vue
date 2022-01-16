@@ -1,11 +1,11 @@
 <template>
-    <div>
-        <h2>User Role</h2>
-        <div v-for="(x, id) in userDatum.user" :key="id">
+    <div class="container">
+        <h3>User Role</h3>
+        <div class="userRole" v-for="(x, id) in userDatum.user" :key="id">
             <span>{{x.type}}</span>
         </div>
-        <h2>Role Available</h2>
-        <div v-for="(role, role_id) in roles" :key="role_id">
+        <h3>Role Available</h3>
+        <div class="availableRoles" v-for="(role, role_id) in roles" :key="role_id">
             <span>{{role.type}}</span>
             <button @click="updateRole(role.role_id)" class="trashcan">
                 <font-awesome-icon icon="plus-square"/>
@@ -49,5 +49,20 @@ export default {
         border: none;
         color: #00CE25;
         outline: none;
+    }
+    .userRole{
+      padding: 0px 10px 10px 10px;
+    }
+    .availableRoles{
+      padding: 0px 10px 10px 10px;
+      float: left;
+    }
+    span{
+        font-size: 15px;
+        font-style: normal;
+        color: black;
+    }
+    h3{
+        font-weight: bold;
     }
 </style>

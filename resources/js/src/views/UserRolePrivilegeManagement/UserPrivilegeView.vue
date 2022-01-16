@@ -1,14 +1,14 @@
 <template>
-    <div>
-        <h2>User Privileges</h2>
-        <div v-for="(datum2, index) in userDatum2.userPrivilege" :key="index">
+    <div class="container">
+        <h3>User Privileges</h3>
+        <div class="userPrivileges" v-for="(datum2, index) in userDatum2.userPrivilege" :key="index">
             <span>{{datum2.permission}}</span>
             <button @click="deletePrivilege(datum2.id)" class="trashcan">
                 <font-awesome-icon icon="trash"/>
             </button>
         </div>
-        <h2>Available Privileges</h2>
-        <div v-for="(privilege, privilege_id) in privileges" :key="privilege_id">
+        <h3>Available Privileges</h3>
+        <div class="availablePrivileges" v-for="(privilege, privilege_id) in privileges" :key="privilege_id">
             <span>{{privilege.permission}}</span>
             <button @click="addPrivilege(privilege.privilege_id)" class="plus">
                 <font-awesome-icon icon="plus-square"/>
@@ -38,7 +38,7 @@ export default {
           axios.delete('api/user-role-privilege/' + id)
           .then(response=>{
               if(response.status == 200){
-                 //this.$emit('reloadUP', this.userDatum2.id);
+                 this.$emit('reloadUP', this.userDatum2.id);
               }
           })
           .catch (error=>{
@@ -48,8 +48,8 @@ export default {
       addPrivilege(id) {
           axios.post('api/user-role-privilege/store/'+ this.userDatum2.id + '/' + id)
           .then(response=>{
-              if(response.status == 200){
-                  
+              if(response.status == 201){
+                 this.$emit('reloadUP', this.userDatum2.id);
               }
           })
           .catch (error=>{
@@ -73,5 +73,21 @@ export default {
         border: none;
         color: #00CE25;
         outline: none;
+    }
+
+    .userPrivileges{
+      padding: 0px 10px 10px 10px;
+
+    }
+    .availablePrivileges{
+      padding: 0px 10px 10px 10px;
+    }
+    span{
+        font-size: 15px;
+        font-style: normal;
+        color: black;
+    }
+    h3{
+        font-weight: bold;
     }
 </style>

@@ -30,20 +30,19 @@
                 </b-pagination>
             </b-col>
         </b-row>
-        <b-modal id="user-role">
+        <b-modal id="user-role" centered title="Edit Role" ok-only>
             <user-role-view 
                 :userDatum="userDatum" :roles="roles"
                 v-on:reloadUR="viewUserRole($event)"
             />
         </b-modal>
-        <b-modal id="user-privilege">
+        <b-modal id="user-privilege" centered title="Edit Privileges" ok-only>
             <user-privilege-view
                 :userDatum2="userDatum2" :privileges="privileges"
                 v-on:reloadUP="viewUserPrivilege($event)"
             />
         </b-modal>
     </div>
-    
 </template>
 
 <script>

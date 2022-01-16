@@ -1,30 +1,33 @@
 <template>
-  <div class="container">
-      <div>
-        <h2>Modal</h2>
-        <b-button v-b-modal.privilege-modal>View Privileges</b-button>
-        <b-modal id="privilege-modal">
-          <privilege-view 
-            :privileges="privileges"
-            v-on:reloadPList="getPrivileges()"
-          />
-        </b-modal>
-        <b-button v-b-modal.role-modal>View Roles</b-button>
-        <b-modal id="role-modal">
-          <role-view 
-            :roles="roles"
-            v-on:reloadRList="getRoles()"
-          />
-        </b-modal>
-      </div>
-      <div>
-        <h2>DataTable</h2>
-        <user-data-table
-          :userData="userData"
-          
-        />
-      </div>
-  </div>
+    <div class="container">
+        <div class="bigBox">
+          <div class="boxes" id="box1">
+            <b-button v-b-modal.privilege-modal variant="primary">View Privileges</b-button>
+            <b-modal id="privilege-modal" centered title="Privileges" ok-only>
+              <privilege-view 
+                :privileges="privileges"
+                v-on:reloadPList="getPrivileges()"
+              />
+            </b-modal>
+          </div>
+          <div class="boxes" id="box2">
+            <b-button v-b-modal.role-modal variant="primary">View Roles</b-button>
+            <b-modal id="role-modal" centered title="Roles" ok-only>
+              <role-view 
+                :roles="roles"
+                v-on:reloadRList="getRoles()"
+              />
+            </b-modal>
+          </div>
+        </div>
+        <div class="bigBox">
+          <div class="boxes" id="box3">
+            <user-data-table
+              :userData="userData"
+            />
+          </div>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -32,6 +35,8 @@ import PrivilegeView from "./PrivilegeView"
 import RoleView from "./RoleView"
 import UserDataTable from "./UserDataTable"
 import axios from 'axios'
+
+
 
 
 export default {
@@ -84,3 +89,23 @@ export default {
   
 }
 </script>
+
+<style>
+  .boxes{
+    padding: 10px;
+  }
+
+  .bigBox{
+    padding: 0px 25px 50px 0px;
+  }
+
+  #box1{
+    float:right;
+  }
+
+  #box2{
+    float:right;
+  }
+
+
+</style>
