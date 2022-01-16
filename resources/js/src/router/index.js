@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
@@ -44,6 +45,38 @@ const router = new VueRouter({
       component: () => import('@/views/Login.vue'),
       meta: {
         layout: 'full',
+      },
+    },
+    {
+      path: '/view-all-announcements',
+      name: 'view-all-announcements',
+      component: () => import('@/views/announcements/all/AllAnnouncement.vue'),
+      meta: {
+        contentRenderer: 'sidebar-left-detached',
+        contentClass: 'ecommerce-application',
+        pageTitle: 'All Announcements',
+        breadcrumb: [
+          {
+            text: 'View All Announcements',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/user-role-privilege-management',
+      name: 'user-role-privilege-management',
+      component: () => import('@/views/UserRolePrivilegeManagement/UserRolePrivilegeApp.vue'),
+      meta: {
+       // contentRenderer: 'sidebar-left-detached',
+        //contentClass: 'ecommerce-application',
+        pageTitle: 'User Role Management',
+        breadcrumb: [
+          {
+            text: 'User Role Management',
+            active: true,
+          },
+        ],
       },
     },
     {
