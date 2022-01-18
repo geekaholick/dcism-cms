@@ -1,12 +1,16 @@
 <template>
   <div
-    id="app"
-    class="h-100"
-    :class="[skinClasses]"
+    id="StudentManagementApp"
+    class="UserListContainer"
   >
-    <component :is="layout">
-      <router-view />
-    </component>
+    <!--Heading tag here is slot reserved for the navBar, heading is only a placeholder for now-->
+    <div class="heading">
+      <h2 id="title">CMS - Student Account Management</h2>
+    </div>
+      <h2 id="formlabel1"> Add User Form </h2>
+      <Add-User-Form-Student />
+      <h2 id="formlabel1"> User List </h2>
+      <List-User-Student :User="User"/>
 
   </div>
 </template>
@@ -14,6 +18,10 @@
 <script>
 
 // This will be populated in `beforeCreate` hook
+import AddUserFormStudent from "./views/AddUserFormStudent"
+import ListUserStudent from "./views/ListUserStudent"
+import axios from 'axios'
+
 import { $themeColors, $themeBreakpoints, $themeConfig } from '@themeConfig'
 import { provideToast } from 'vue-toastification/composition'
 import { watch } from '@vue/composition-api'
@@ -31,10 +39,31 @@ export default {
   components: {
 
     // Layouts
+    AddUserFormStudent,
+    ListUserStudent,
     LayoutHorizontal,
     LayoutVertical,
     LayoutFull,
 
+  },
+  data: function(){
+    return {
+      User: []
+    }
+  },
+  methods: {
+    getUsers(){
+      axios.get('/api/StudentUsers')
+      .then( response => {
+        this.User = response.data.filter(u => u.role_id === 3)
+      })
+      .catch(error =>{
+        console.log( error );
+      })
+    }
+  },
+  created() {  
+    this.getUsers();
   },
   // ! We can move this computed: layout & contentLayoutType once we get to use Vue 3
   // Currently, router.currentRoute is not reactive and doesn't trigger any change
@@ -50,30 +79,30 @@ export default {
   beforeCreate() {
     // Set colors in theme
     const colors = ['primary', 'secondary', 'success', 'info', 'warning', 'danger', 'light', 'dark']
-
+    
     // eslint-disable-next-line no-plusplus
     for (let i = 0, len = colors.length; i < len; i++) {
       $themeColors[colors[i]] = useCssVar(`--${colors[i]}`, document.documentElement).value.trim()
     }
-
+    
     // Set Theme Breakpoints
     const breakpoints = ['xs', 'sm', 'md', 'lg', 'xl']
-
+    
     // eslint-disable-next-line no-plusplus
     for (let i = 0, len = breakpoints.length; i < len; i++) {
       $themeBreakpoints[breakpoints[i]] = Number(useCssVar(`--breakpoint-${breakpoints[i]}`, document.documentElement).value.slice(0, -2))
     }
-
+    
     // Set RTL
     const { isRTL } = $themeConfig.layout
     document.documentElement.setAttribute('dir', isRTL ? 'rtl' : 'ltr')
   },
   setup() {
     const { skin, skinClasses } = useAppConfig()
-
+    
     // If skin is dark when initialized => Add class to body
     if (skin.value === 'dark') document.body.classList.add('dark-layout')
-
+    
     // Provide toast for Composition API usage
     // This for those apps/components which uses composition API
     // Demos will still use Options API for ease
@@ -85,17 +114,40 @@ export default {
       timeout: 3000,
       transition: 'Vue-Toastification__fade',
     })
-
+    
     // Set Window Width in store
     store.commit('app/UPDATE_WINDOW_WIDTH', window.innerWidth)
     const { width: windowWidth } = useWindowSize()
     watch(windowWidth, val => {
       store.commit('app/UPDATE_WINDOW_WIDTH', val)
     })
-
+    
     return {
       skinClasses,
     }
   },
 }
 </script>
+
+<style scoped>
+.UserListContainer {
+  width: 100%;
+  margin: auto
+}
+
+.heading {
+  background: white;
+  padding: 10px;
+}
+
+#title {
+  text-align: left;
+  font-size: 2em;
+  padding: 1em
+}
+
+#formlabel1 {
+  margin: 10px 10px 10px 30px;
+  font-size: 40px;
+}
+</style>

@@ -9,6 +9,11 @@ class ApplicationController extends Controller
 {
     public function index()
     {
-        return view('application');
+        return view('FacultyManagement');
+    }
+ 
+    public function index2()
+    {
+        return view('StudentManagement');
     }
 }

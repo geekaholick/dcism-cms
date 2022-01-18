@@ -8,7 +8,7 @@
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <!-- <link rel="icon" href="<%= BASE_URL %>favicon.ico"> -->
 
-  <title>Vuexy - Vuejs, HTML & Laravel Admin Dashboard Template</title>
+  <title>CMS Faculty Accounts</title>
 
   <!-- Splash Screen/Loader Styles -->
   <link rel="stylesheet" type="text/css" href="{{ asset(mix('css/loader.css')) }}" />
@@ -39,7 +39,7 @@
       <div class="effect-3 effects"></div>
     </div>
   </div>
-  <div id="app">
+  <div id="FacultyManagementApp">
   </div>
 
   <script src="{{ asset(mix('js/app.js')) }}"></script>
