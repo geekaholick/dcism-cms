@@ -1,20 +1,25 @@
 <template>
   <div
-    id="StudentManagementApp"
+    id="FacultyManagementApp"
     class="UserListContainer"
   >
     <!--Heading tag here is slot reserved for the navBar, heading is only a placeholder for now-->
-    <component :is="layout">
-      <router-view/>
-    </component>
+    <div class="heading">
+      <h2 id="title">CMS - Faculty Account Management</h2>
+    </div>
+      <h2 id="formlabel1"> Add User Form </h2>
+      <Add-User-Form-Admin />
+      <h2 id="formlabel1"> User List </h2>
+      <List-User-Admin :User="User"/>
+
   </div>
 </template>
 
 <script>
 
 // This will be populated in `beforeCreate` hook
-import AddUserFormStudent from "./views/AddUserFormStudent"
-import ListUserStudent from "./views/ListUserStudent"
+import AddUserFormAdmin from "./AddUserFormAdmin"
+import ListUserAdmin from "./ListUserAdmin"
 import axios from 'axios'
 
 import { $themeColors, $themeBreakpoints, $themeConfig } from '@themeConfig'
@@ -34,8 +39,8 @@ export default {
   components: {
 
     // Layouts
-    AddUserFormStudent,
-    ListUserStudent,
+    AddUserFormAdmin,
+    ListUserAdmin,
     LayoutHorizontal,
     LayoutVertical,
     LayoutFull,
@@ -48,9 +53,9 @@ export default {
   },
   methods: {
     getUsers(){
-      axios.get('/api/StudentUsers')
+      axios.get('/api/FacultyUsers')
       .then( response => {
-        this.User = response.data.filter(u => u.role_id === 3)
+        this.User = response.data.filter(u => u.role_id !== 3)
       })
       .catch(error =>{
         console.log( error );

@@ -13,12 +13,12 @@ const router = new VueRouter({
     {
       path: '/FacultyManagement',
       name: 'FacultyManagementApp',
-      component: () => import('@/FacultyManagementApp.vue'),
+      component: () => import('@/views/Faculty.vue'),
       meta: {
-        pageTitle: 'App',
+        pageTitle: 'Faculty Account Management',
         breadcrumb: [
           {
-            text: 'App',
+            text: 'Faculty',
             active: true,
           },
         ],
@@ -27,12 +27,12 @@ const router = new VueRouter({
     {
       path: '/StudentManagement',
       name: 'StudentManagementApp',
-      component: () => import('@/StudentManagementApp.vue'),
+      component: () => import('@/views/Student.vue'),
       meta: {
-        pageTitle: 'App2',
+        pageTitle: 'Student Account Management',
         breadcrumb: [
           {
-            text: 'App2',
+            text: 'Student',
             active: true,
           },
         ],

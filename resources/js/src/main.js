@@ -64,4 +64,4 @@ if(document.getElementById("StudentManagementApp")){
     store,
     render: h => h(StudentManagementApp),
   }).$mount('#StudentManagementApp')
-  }
+}

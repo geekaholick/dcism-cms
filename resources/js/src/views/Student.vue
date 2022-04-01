@@ -4,17 +4,22 @@
     class="UserListContainer"
   >
     <!--Heading tag here is slot reserved for the navBar, heading is only a placeholder for now-->
-    <component :is="layout">
-      <router-view/>
-    </component>
+    <div class="heading">
+      <h2 id="title">CMS - Student Account Management</h2>
+    </div>
+      <h2 id="formlabel1"> Add User Form </h2>
+      <Add-User-Form-Student />
+      <h2 id="formlabel1"> User List </h2>
+      <List-User-Student :User="User"/>
+
   </div>
 </template>
 
 <script>
 
 // This will be populated in `beforeCreate` hook
-import AddUserFormStudent from "./views/AddUserFormStudent"
-import ListUserStudent from "./views/ListUserStudent"
+import AddUserFormStudent from "./AddUserFormStudent"
+import ListUserStudent from "./ListUserStudent"
 import axios from 'axios'
 
 import { $themeColors, $themeBreakpoints, $themeConfig } from '@themeConfig'

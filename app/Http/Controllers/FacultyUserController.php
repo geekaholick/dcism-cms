@@ -78,6 +78,7 @@ class FacultyUserController extends Controller
             ['user_id' => $user->user_id, 'privilege_id' => 3, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()]
         ];
         DB::table('user_privileges')->insert($data);
+        return $request;
     }
     }
 
@@ -139,7 +140,7 @@ class FacultyUserController extends Controller
                     if(!(is_string($request->user_image))){
                     $imageFileName =  $request->user_image->getClientOriginalname();
                     $imageFileName =  "/"."storage"."/".$imageFileName;
-                    }    
+                    }   
                 }
         $existingUser = new User;
         $existingUser = DB::table('users')
