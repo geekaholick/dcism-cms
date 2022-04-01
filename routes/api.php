@@ -19,8 +19,10 @@ use App\Http\Controllers\AnnouncementController;
 // ANNOUNCEMENT ROUTES
 Route::get('/get-all-announcements', [AnnouncementController::class, 'getAllAnnouncements']);
 Route::get('/get-all-announcements-count', [AnnouncementController::class, 'getAnnouncementCount']);
-
-
+Route::post('/bookmark-announcement', [AnnouncementController::class, 'bookmarkAnnouncement']);
+Route::post('/unbookmark-announcement', [AnnouncementController::class, 'unbookmarkAnnouncement']);
+Route::get('/get-all-bookmarks', [AnnouncementController::class, 'getAllBookmarks']);
+Route::get('/get-all-bookmarks-count', [AnnouncementController::class, 'getAllBookmarksCount']);
 
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {

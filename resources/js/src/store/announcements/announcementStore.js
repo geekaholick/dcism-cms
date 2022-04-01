@@ -17,10 +17,7 @@ const getters = {
 const actions = {
   [types.ACTION_GET_ALL_ANNOUNCEMENTS](context, data) {
     return new Promise(resolve => {
-      console.log('actions announcements')
-      console.log(data)
-      Api().get(data.items ? `/get-all-announcements?page=${data.page}&items=${data.items}`
-        : `/get-all-announcements?page=${data.page}`)
+      Api().get(`/get-all-announcements?page=${data.args.page}&items=${data.args.perPage}&q=${data.args.q}&sort=${data.args.sortBy}&month=${data.args.months}&year=${data.args.years}&user_id=${data.user_id}`)
         .then(resp => {
           context.commit(types.MUTATION_SET_ALL_ANNOUNCEMENTS, resp.data)
           resolve(resp.data)
@@ -33,7 +30,57 @@ const actions = {
   },
   [types.ACTION_GET_ANNOUNCEMENTS_COUNT](context, data) {
     return new Promise(resolve => {
-      Api().get('/get-all-announcements-count')
+      Api().get(`/get-all-announcements-count?q=${data.args.q}&sort=${data.args.sortBy}&month=${data.args.months}&year=${data.args.years}`)
+        .then(resp => {
+          context.commit(types.MUTATION_SET_ANNOUNCEMENT_COUNT, resp.data)
+          resolve(resp.data)
+        })
+        .catch(err => {
+          context.commit(types.MUTATION_SET_ERROR, err.response.data.errors)
+          resolve(err.response.data.errors)
+        })
+    })
+  },
+  [types.ACTION_BOOKMARK_ANNOUNCEMENT](context, data) {
+    return new Promise(resolve => {
+      Api().post('/bookmark-announcement', data)
+        .then(res => {
+          resolve(res.data)
+        })
+        .catch(err => {
+          context.commit(types.MUTATION_SET_ERROR, err.response.data.errors)
+          resolve(err.response.data.errors)
+        })
+    })
+  },
+  [types.ACTION_UNBOOKMARK_ANNOUNCEMENT](context, data) {
+    return new Promise(resolve => {
+      Api().post('/unbookmark-announcement', data)
+        .then(res => {
+          resolve(res.data)
+        })
+        .catch(err => {
+          context.commit(types.MUTATION_SET_ERROR, err.response.data.errors)
+          resolve(err.response.data.errors)
+        })
+    })
+  },
+  [types.ACTION_GET_ALL_BOOKMARKED_ANNOUNCEMENTS](context, data) {
+    return new Promise(resolve => {
+      Api().get(`/get-all-bookmarks?page=${data.args.page}&items=${data.args.perPage}&q=${data.args.q}&sort=${data.args.sortBy}&user_id=${data.user_id}`)
+        .then(resp => {
+          context.commit(types.MUTATION_SET_ALL_ANNOUNCEMENTS, resp.data)
+          resolve(resp.data)
+        })
+        .catch(err => {
+          context.commit(types.MUTATION_SET_ERROR, err.response.data.errors)
+          resolve(err.response.data.errors)
+        })
+    })
+  },
+  [types.ACTION_GET_BOOKMARKED_ANNOUNCEMENTS_COUNT](context, data) {
+    return new Promise(resolve => {
+      Api().get(`/get-all-bookmarks-count?q=${data.args.q}&user_id=${data.user_id}`)
         .then(resp => {
           context.commit(types.MUTATION_SET_ANNOUNCEMENT_COUNT, resp.data)
           resolve(resp.data)
