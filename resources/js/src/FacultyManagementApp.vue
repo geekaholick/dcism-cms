@@ -4,14 +4,9 @@
     class="UserListContainer"
   >
     <!--Heading tag here is slot reserved for the navBar, heading is only a placeholder for now-->
-    <div class="heading">
-      <h2 id="title">CMS - Faculty Account Management</h2>
-    </div>
-      <h2 id="formlabel1"> Add User Form </h2>
-      <Add-User-Form-Admin />
-      <h2 id="formlabel1"> User List </h2>
-      <List-User-Admin :User="User"/>
-
+    <component :is="layout">
+      <router-view />
+    </component>
   </div>
 </template>
 
