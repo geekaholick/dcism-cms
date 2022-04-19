@@ -2,8 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
-use App\Http\Controllers\AnnouncementController;
+use App\HTTP\Controllers\FacultyUserController;
+use App\HTTP\Controllers\StudentUserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,13 +16,22 @@ use App\Http\Controllers\AnnouncementController;
 |
 */
 
-// ANNOUNCEMENT ROUTES
-Route::get('/get-all-announcements', [AnnouncementController::class, 'getAllAnnouncements']);
-Route::get('/get-all-announcements-count', [AnnouncementController::class, 'getAnnouncementCount']);
-
-
-
-
-Route::middleware('auth:api')->get('/user', function (Request $request) {
+Route::middleware('auth:api')->get('/User', function (Request $request) {
     return $request->user();
 });
+//Faculty APIs
+Route::get('/FacultyUsers', [FacultyUserController::class, 'index']);
+Route::prefix('/FacultyUser')->group( function () {
+    Route::post('/store', [FacultyUserController::class, 'store']);
+    Route::put('/{id}', [FacultyUserController::class, 'update']);
+    Route::delete('/{id}', [FacultyUserController::class, 'destroy']);
+    }
+);
+//Student APIs
+Route::get('/StudentUsers', [StudentUserController::class, 'index']);
+Route::prefix('/StudentUser')->group( function () {
+    Route::post('/store', [StudentUserController::class, 'store']);
+    Route::put('/{id}', [StudentUserController::class, 'update']);
+    Route::delete('/{id}', [StudentUserController::class, 'destroy']);
+    }
+);

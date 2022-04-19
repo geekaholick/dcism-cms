@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved */
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
@@ -12,52 +11,28 @@ const router = new VueRouter({
   },
   routes: [
     {
-      path: '/',
-      name: 'home',
-      component: () => import('@/views/Home.vue'),
+      path: '/FacultyManagement',
+      name: 'FacultyManagementApp',
+      component: () => import('@/views/Faculty.vue'),
       meta: {
-        pageTitle: 'Home',
+        pageTitle: 'Faculty Account Management',
         breadcrumb: [
           {
-            text: 'Home',
+            text: 'Faculty',
             active: true,
           },
         ],
       },
     },
     {
-      path: '/second-page',
-      name: 'second-page',
-      component: () => import('@/views/SecondPage.vue'),
+      path: '/StudentManagement',
+      name: 'StudentManagementApp',
+      component: () => import('@/views/Student.vue'),
       meta: {
-        pageTitle: 'Second Page',
+        pageTitle: 'Student Account Management',
         breadcrumb: [
           {
-            text: 'Second Page',
-            active: true,
-          },
-        ],
-      },
-    },
-    {
-      path: '/login',
-      name: 'login',
-      component: () => import('@/views/Login.vue'),
-      meta: {
-        layout: 'full',
-      },
-    },
-    {
-      path: '/view-all-announcements',
-      name: 'view-all-announcements',
-      component: () => import('@/views/announcements/all/AllAnnouncement.vue'),
-      meta: {
-        contentRenderer: 'sidebar-left-detached',
-        contentClass: 'ecommerce-application',
-        pageTitle: 'All Announcements',
-        breadcrumb: [
-          {
-            text: 'View All Announcements',
+            text: 'Student',
             active: true,
           },
         ],
@@ -70,7 +45,7 @@ const router = new VueRouter({
       meta: {
         layout: 'full',
       },
-    },
+    },  
     {
       path: '*',
       redirect: 'error-404',
