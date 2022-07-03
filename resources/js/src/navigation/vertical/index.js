@@ -34,4 +34,9 @@ export default [
         route: null,
         icon: "FileTextIcon",
     },
+        {
+        title: "Settings",
+        route: null,
+        icon: "SettingsIcon",
+    },
 ];
