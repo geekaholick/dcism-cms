@@ -7,22 +7,36 @@ export default [
     {
         title: "Announcement",
         route: "second-page",
-        icon: "FileIcon",
+        icon: "LayoutIcon",
         children: [
             {
-                title: "Bookmarked Announcement",
+                title: "All Announcement",
                 route: "second-page",
+            },
+            {
+                title: "Bookmarked Announcement",
+                route: null,
             },
         ],
     },
     {
         title: "Department Calendar",
-        route: "second-page",
+        route: null,
         icon: "CalendarIcon",
     },
     {
+        title: "Notifications",
+        route: null,
+        icon: "BellIcon",
+    },
+    {
         title: "Memo",
-        route: "second-page",
+        route: null,
         icon: "FileTextIcon",
+    },
+        {
+        title: "Settings",
+        route: null,
+        icon: "SettingsIcon",
     },
 ];
