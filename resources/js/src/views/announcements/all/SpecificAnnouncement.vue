@@ -2,276 +2,26 @@
   <div
     style="height: inherit"
   >
-    <!-- Announcement Header -->
-    <section id="ecommerce-header">
-      <div class="row">
-        <div class="col-sm-12">
-          <div class="ecommerce-header-items">
-            <div class="result-toggler">
-              <feather-icon
-                icon="MenuIcon"
-                class="d-block d-lg-none"
-                size="21"
-                @click="mqShallShowLeftSidebar = true"
-              />
-              <div class="search-results">
-                {{ totalAnnouncements }} results found
-              </div>
-            </div>
-            <div class="view-options d-flex">
-              <!-- Sort Button -->
-              <b-dropdown
-                v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-                :text="sortBy.text"
-                right
-                variant="outline-primary"
-              >
-                <b-dropdown-item
-                  v-for="sortOption in sortByOptions"
-                  :key="sortOption.value"
-                  @click="sortBy = sortOption"
-                >
-                  {{ sortOption.text }}
-                </b-dropdown-item>
-              </b-dropdown>
-
-              <!-- Item View Radio Button Group  -->
-              <b-form-radio-group
-                v-model="itemView"
-                class="ml-1 list item-view-radio-group"
-                buttons
-                size="sm"
-                button-variant="outline-primary"
-              >
-                <b-form-radio
-                  v-for="option in itemViewOptions"
-                  :key="option.value"
-                  :value="option.value"
-                >
-                  <feather-icon
-                    :icon="option.icon"
-                    size="18"
-                  />
-                </b-form-radio>
-              </b-form-radio-group>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Overlay -->
-    <div class="body-content-overlay" />
-
-    <!-- Searchbar -->
-    <div class="ecommerce-searchbar mt-1">
-      <b-row>
-        <b-col cols="12">
-          <b-input-group class="input-group-merge">
-            <b-form-input
-              v-model="filters.q"
-              placeholder="Search Announcement"
-              class="search-product"
-            />
-            <b-input-group-append is-text>
-              <feather-icon
-                icon="SearchIcon"
-                class="text-muted"
-              />
-            </b-input-group-append>
-          </b-input-group>
-        </b-col>
-      </b-row>
-    </div>
-
-    <!-- Announcements Section -->
-    <div
-      v-if="isLoading"
-    >
-      <section :class="itemView">
-        <announcement-skeleton
-          v-for="i in perPage"
-          :key="i"
-        />
-      </section>
-    </div>
-    <div v-else>
-      <div
-        v-if="totalAnnouncements == 0"
-        class="d-flex justify-content-center py-4"
-      >
-        <b-col
-          md="8"
-          lg="8"
-        >
-          <b-card
-            title="Uh ohhh! 😢"
-            class="text-center"
-            bg-variant="light-danger"
-            text-variant="primary"
-          >
-            <b-card-text>
-              There are no announcements to be displayed.
-            </b-card-text>
-            <b-button
-              v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-              variant="outline-primary"
-            >
-              <router-link :to="'/view-all-announcements'">
-                Go somewhere else
-              </router-link>
-            </b-button>
-          </b-card>
-        </b-col>
-      </div>
-
-      <section
-        v-else
-        :class="itemView"
-      >
-        <b-card
-          v-for="announcement in rendered_announcements"
-          :key="announcement.announcement_id"
-          class="ecommerce-card position-relative"
-          stye="display: flex !important; flex-direction: flex-column !important;"
-          no-body
-        >
-
-          <div
-            class="item-wrapper pt-2 pl-1 pb-0"
-            style="justify-content: space-between; align-items: center;"
-          >
-            <div
-              class="d-flex"
-              style="gap: 0.75rem;"
-            >
-              <b-avatar
-                size="40"
-                :variant="profile_color[announcement.user_id % profile_color.length]"
-                badge
-                :src="null"
-                :text="`${announcement.first_name[0].toUpperCase()}${announcement.last_name[0].toUpperCase()}`"
-                class="badge-minimal"
-              />
-              <div>
-                <p
-                  class="pb-0 mb-0 font-weight-bolder"
-                >
-                  {{ announcement.first_name }} {{ announcement.last_name }}
-                </p>
-                <span
-                  class="item-description text-muted font-weight-bolder"
-                  style="word-wrap: break-word;"
-                >{{ formatDate(announcement.created_at) }}
-                </span>
-              </div>
-            </div>
-
-            <!-- Dropdown Bookmark -->
-            <div class="dropdown float-right">
-              <b-dropdown
-                variant="link"
-                no-caret
-                toggle-class="p-0 mr-1"
-                right
-              >
-                <template #button-content>
-                  <feather-icon
-                    icon="MoreVerticalIcon"
-                    size="16"
-                    class="align-middle text-body"
-                  />
-                </template>
-                <b-dropdown-item>
-                  <feather-icon
-                    size="16"
-                    icon="BookmarkIcon"
-                    class="mr-50"
-                  /> Bookmark this announcement
-                </b-dropdown-item>
-              </b-dropdown>
-            </div>
-          </div>
-
-          <!-- Announcement Details -->
-          <b-card-body class="cursor-pointer">
-            <h6 class="item-name mb-2">
-              <b-link
-                class="text-body"
-                :to="'/view-specific-announcement/' + announcement.announcement_id"
-              >
-                {{ announcement.title }}
-              </b-link>
-            </h6>
-            <b-card-text class="item-description">
-              {{ addReadMoreToBody(announcement.body) }}
-              <router-link :to="'/view-specific-announcement/' + announcement.announcement_id" >
-                (Read more)
-              </router-link>
-            </b-card-text>
-          </b-card-body>
-
-          <!-- Product Actions -->
-          <div class="item-options text-center border-top mx-2">
-            <div class="item-wrapper justify-content-start">
-              <div class="item-cost">
-                <span
-                  class="item-price cursor-pointer"
-                  style="font-size: 0.75rem;"
-                >
-                  <feather-icon
-                    size="16"
-                    icon="MessageSquareIcon"
-                    class="mr-50"
-                  />
-                  {{ announcement.comment_no >= 1000 ? `${formatCommentCount(announcement.comment_no)}k comments` : announcement.comment_no > 1 ? `${announcement.comment_no} comments` : `${announcement.comment_no} comment` }}
-                </span>
-              </div>
-            </div>
-          </div>
-        </b-card>
-      </section>
-    </div>
-    <!-- Pagination -->
+    <router-link to="/view-all-announcements" class="back-button">< Go back</router-link><br>
     <section>
-      <b-row>
-        <b-col cols="12">
-          <b-pagination
-            v-model="page"
-            :total-rows="totalAnnouncements"
-            :per-page="perPage"
-            first-number
-            align="center"
-            last-number
-            prev-class="prev-item"
-            next-class="next-item"
-            @click="makePagination"
-          >
-            <template #prev-text>
-              <feather-icon
-                icon="ChevronLeftIcon"
-                size="18"
-              />
-            </template>
-            <template #next-text>
-              <feather-icon
-                icon="ChevronRightIcon"
-                size="18"
-              />
-            </template>
-          </b-pagination>
-        </b-col>
-      </b-row>
+      <b-card class="specific-announcement">
+        <div>
+          <h1>{{rendered_announcements[(this.$route.params.id)-1].title}}</h1>
+          <h4>By: {{rendered_announcements[(this.$route.params.id)-1].first_name}} {{rendered_announcements[(this.$route.params.id)-1].last_name}}</h4>
+          <h4>On: {{formatDate(rendered_announcements[(this.$route.params.id)-1].created_at)}}</h4>
+          <br><br>
+          <p>{{rendered_announcements[(this.$route.params.id)-1].body}}</p>
+        </div>
+      </b-card>
+      <b-card class="comments">
+        <div>
+        <h2>Comments</h2>
+        <b-card>
+          <p>{{rendered_announcements[(this.$route.params.id)-1].comment}}</p>
+        </b-card>
+        </div>
+      </b-card>
     </section>
-
-    <!-- Sidebar -->
-    <portal to="content-renderer-sidebar-detached-left">
-      <announcement-filter
-        :filters="filters"
-        :filter-options="filterOptions"
-        :mq-shall-show-left-sidebar.sync="mqShallShowLeftSidebar"
-      />
-    </portal>
   </div>
 </template>
 
@@ -280,6 +30,26 @@
 </style>
 
 <style lang="scss" scoped>
+
+.back-button {
+  font-size: 20px;
+}
+
+.comments {
+  max-width: 70rem;
+  display: flex;
+  justify-content: center;
+  margin: auto;
+  margin-top: 3vh;
+}
+
+.specific-announcement {
+  max-width: 70rem;
+  display: flex;
+  justify-content: center;
+  margin: auto;
+  margin-top: 3vh;
+}
 
 .ecommerce-application .ecommerce-card {
   grid-template-columns: 1fr !important;
@@ -365,6 +135,7 @@ import { mapGetters, mapActions } from 'vuex'
 import AnnouncementFilter from './AnnouncementFilter.vue'
 import AnnouncementSkeleton from './AnnouncementSkeleton.vue'
 import * as announcementTypes from '../../../store/announcements/announcementTypes'
+import * as announcementComments from '../../../store/announcements/announcementComments'
 
 export default {
   directives: {
@@ -456,9 +227,12 @@ export default {
       isLoading: true,
       totalAnnouncements: 0,
       page: 1,
-      perPage: 12,
+      commentCount: 1,
+      perPage: 1,
       announcement_list: [],
       rendered_announcements: [],
+      comment_list: [],
+      rendered_comments: [],
       passToSearch: [],
     }
   },
@@ -476,26 +250,42 @@ export default {
   async created() {
     try {
       const count = await this.getAnnouncementCount()
+      // const commentCount = await this.getCommentCount()
       this.totalAnnouncements = count
 
       const page = 1
       const items = 12
+      // const commentItems = 12
+      // const commentCounter = 1
       const announcements = await this.getAllAnnouncements({
         page, items,
       })
 
+      // const comments = await this.getAllComments({
+      //   commentCounter, commentItems
+      // })
+
       this.announcement_list = new Array(count)
+      // this.comment_list = new Array(commentCount)
 
       // eslint-disable-next-line no-plusplus
       for (let offset = (page - 1) * items, i = 0; i < items; offset++, i++) {
         this.announcement_list[offset] = announcements[i]
       }
 
+      // for(let newNum = (commentCounter - 1) * commentItems, j = 0; j < commentItems; newNum++, j++) {
+      //   this.comment_list[newNum] = comments[j]
+      // }
+
       this.passToSearch = announcements
       this.rendered_announcements = [...announcements]
+      // this.rendered_comments = [...comments]
+
     } catch (e) {
       console.log(e.toString())
     }
+
+    
 
     this.isLoading = false
   },
@@ -503,6 +293,8 @@ export default {
     ...mapActions({
       getAllAnnouncements: announcementTypes.ACTION_GET_ALL_ANNOUNCEMENTS,
       getAnnouncementCount: announcementTypes.ACTION_GET_ANNOUNCEMENTS_COUNT,
+      // getAllComments: announcementComments.ACTION_GET_ALL_COMMENTS,
+      // getCommentCount: announcementComments.ACTION_GET_COMMENTS_COUNT,
     }),
     formatDate(date) {
       const months = [
@@ -639,6 +431,15 @@ export default {
         .catch(err => {
           console.log(err.toString())
         })
+
+      // this.getAllComments(params)
+      //   .then(resp => {
+      //     for(let newNum = (params.commentCounter -1) * params.commentItems, j = 0; j < resp.length; newNum++, j++) {
+      //       this.comment_list[newNum] = resp[j]
+      //     }
+
+      //     this.rendered_comments = resp
+      //   })
     },
   },
 }
