@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
@@ -44,6 +45,52 @@ const router = new VueRouter({
       component: () => import('@/views/Login.vue'),
       meta: {
         layout: 'full',
+      },
+    },
+    {
+      path: '/view-all-announcements',
+      name: 'view-all-announcements',
+      component: () => import('@/views/announcements/all/AllAnnouncement.vue'),
+      meta: {
+        contentRenderer: 'sidebar-left-detached',
+        contentClass: 'ecommerce-application',
+        pageTitle: 'All Announcements',
+        breadcrumb: [
+          {
+            text: 'View All Announcements',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/view-specific-announcement',
+      name: 'view-specific-announcement',
+      component: () => import('@/views/announcements/all/SpecificAnnouncement.vue'),
+      meta: {
+        contentClass: 'ecommerce-application',
+        pageTitle: 'Specific Announcement',
+        breadcrumb: [
+          {
+            text: 'View Specific Announcement',
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: '/view-specific-announcement/:id',
+      name: 'view-specific-announcement',
+      component: () => import('@/views/announcements/all/SpecificAnnouncement.vue'),
+      meta: {
+        contentClass: 'ecommerce-application',
+        pageTitle: 'Specific Announcement',
+        breadcrumb: [
+          {
+            text: 'View Specific Announcement',
+            active: true,
+          },
+        ],
       },
     },
     {
