@@ -1,42 +1,41 @@
 export default [
-    {
-        title: "Home",
-        route: "home",
-        icon: "HomeIcon",
-    },
+    // {
+    //     title: "Home",
+    //     route: "home",
+    //     icon: "HomeIcon",
+    // },
     {
         title: "Announcement",
-        route: "second-page",
         icon: "LayoutIcon",
         children: [
             {
                 title: "All Announcement",
-                route: "second-page",
+                route: "announcement",
             },
             {
                 title: "Bookmarked Announcement",
-                route: null,
+                route: "bookmarked",
             },
         ],
     },
     {
         title: "Department Calendar",
-        route: null,
+        route: "calendar",
         icon: "CalendarIcon",
     },
     {
         title: "Notifications",
-        route: null,
+        route: "notifications",
         icon: "BellIcon",
     },
     {
         title: "Memo",
-        route: null,
+        route: "memo",
         icon: "FileTextIcon",
     },
         {
         title: "Settings",
-        route: null,
+        route: "settings",
         icon: "SettingsIcon",
     },
 ];

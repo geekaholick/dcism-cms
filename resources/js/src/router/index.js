@@ -25,14 +25,84 @@ const router = new VueRouter({
       },
     },
     {
-      path: '/second-page',
-      name: 'second-page',
-      component: () => import('@/views/SecondPage.vue'),
+      path: '/view-all-announcement',
+      name: 'announcement',
+      component: () => import('@/views/announcement.vue'),
       meta: {
-        pageTitle: 'Second Page',
+        pageTitle: 'All Announcement',
         breadcrumb: [
           {
-            text: 'Second Page',
+            text: 'All Announcement',
+            active: true,
+          },
+        ],
+      },
+    },
+        {
+      path: '/calendar',
+      name: 'calendar',
+      component: () => import('@/views/calendar.vue'),
+      meta: {
+        pageTitle: 'Department Calendar',
+        breadcrumb: [
+          {
+            text: 'Department Calendar',
+            active: true,
+          },
+        ],
+      },
+    },
+          {
+      path: '/notifications',
+      name: 'notifications',
+      component: () => import('@/views/notifications.vue'),
+      meta: {
+        pageTitle: 'Notifications',
+        breadcrumb: [
+          {
+            text: 'Notifications',
+            active: true,
+          },
+        ],
+      },
+    },
+             {
+      path: '/memo',
+      name: 'memo',
+      component: () => import('@/views/memo.vue'),
+      meta: {
+        pageTitle: 'Memo',
+        breadcrumb: [
+          {
+            text: 'Memo',
+            active: true,
+          },
+        ],
+      },
+    },
+                {
+      path: '/settings',
+      name: 'settings',
+      component: () => import('@/views/settings.vue'),
+      meta: {
+        pageTitle: 'Settings',
+        breadcrumb: [
+          {
+            text: 'Settings',
+            active: true,
+          },
+        ],
+      },
+    },
+            {
+      path: '/bookmarked-announcement',
+      name: 'bookmarked',
+      component: () => import('@/views/bookmark.vue'),
+      meta: {
+        pageTitle: 'Bookmarked Announcement',
+        breadcrumb: [
+          {
+            text: 'Bookmarked Announcement',
             active: true,
           },
         ],
