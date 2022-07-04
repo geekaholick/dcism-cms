@@ -1,9 +1,9 @@
 export default [
-    // {
-    //     title: "Home",
-    //     route: "home",
-    //     icon: "HomeIcon",
-    // },
+    {
+        title: "Home",
+        route: "home",
+        icon: "HomeIcon",
+    },
     {
         title: "Announcement",
         icon: "LayoutIcon",
