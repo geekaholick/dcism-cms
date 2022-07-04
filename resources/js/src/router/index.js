@@ -54,7 +54,7 @@ const router = new VueRouter({
       meta: {
         contentRenderer: 'sidebar-left-detached',
         contentClass: 'ecommerce-application',
-        pageTitle: 'All Announcements',
+        pageTitle: 'Announcements',
         breadcrumb: [
           {
             text: 'View All Announcements',
